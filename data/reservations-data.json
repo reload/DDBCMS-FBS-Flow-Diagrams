@@ -9,10 +9,46 @@
       "Note right of Låner: Forudsætning:\\n 1)Auth af bibliotek\\n2) Auth af låner",
       "Låner->DDB CMS: Se aktuelle reservationer",
       "DDB CMS->FBS: reservations(agencyid, patronid)",
-      "FBS->FBS: Udregning af expiryDate ud fra låners interessedato",
-      "FBS-->DDB CMS: ReservationDetails(recordId,pickupBranch,expiryDate,reservationId,\\npickupDeadline,dateOfReservation,state,numberInQueue)*",
-      "Note right of DDB CMS: OBS! Der mangler et afhentningsnummer!",
+      "FBS->FBS: Udregning af expiryDate ud fra\\n låners interessedato/dateOfReservation",
+      "FBS-->DDB CMS: ReservationDetails(recordId,pickupBranch,\\nexpiryDate,reservationId,pickupDeadline,\\ndateOfReservation,state,numberInQueue)*",
+      "Note right of DDB CMS: OBS! Der mangler et afhentningsnr!",
       "DDB CMS->FBS: branches(agencyId)",
+      "FBS-->DDB CMS: AgencyBranch (branchId, Title)*",
+      "DDB CMS->DDB CMS: get Title from pickupBranch",
+      "Note over DDB CMS: get bibliografiske\\n poster+forsidebilleder",
+      "DDB CMS->Låner: if state=readyForPickup: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede, afhentningsnr",
+      "DDB CMS->Låner: if state=reserved/InterLibRes: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede,numberInQueue",
+      "DDB CMS->Låner: if state=other: ?"
+    ]
+  },
+   {
+    "steps": [
+      "title: Oversigt over reservationer: Client unauthorized",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of DDB CMS: OBS: * indikerer arrays",
+      "Note right of Låner: Forudsætning:\\n 1)Auth af bibliotek\\n2) Auth af låner",
+      "Låner->DDB CMS: Se aktuelle reservationer",
+      "DDB CMS->FBS: reservations(agencyid, patronid)",
+      "FBS->FBS: agencyid kunne ikke verificeres",
+      "FBS-->DDB CMS: HTTP Status Code 401",
+      "DDB CMS->Låner: FEJL"
+    ]
+  },
+   {
+      "steps": [
+      "title: Oversigt over reservationer: Patron unauthorized",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of DDB CMS: OBS: * indikerer arrays",
+      "Note right of Låner: Forudsætning:\\n 1)Auth af bibliotek\\n2) Auth af låner",
+      "Låner->DDB CMS: Se aktuelle reservationer",
+      "DDB CMS->FBS: reservations(agencyid, patronid)",
+      "FBS->FBS: patronid kunne ikke verificeres",
+      "FBS-->DDB CMS: HTTP Status Code 404",
+      "DDB CMS->Låner: FEJL"
     ]
   }
 ]

@@ -1,0 +1,18 @@
+[
+  {
+    "steps": [
+      "title: Oversigt over reservationer: OK",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of DDB CMS: OBS: * indikerer arrays",
+      "Note right of Låner: Forudsætning:\\n 1)Auth af bibliotek\\n2) Auth af låner",
+      "Låner->DDB CMS: Se aktuelle reservationer",
+      "DDB CMS->FBS: reservations(agencyid, patronid)",
+      "FBS->FBS: Udregning af expiryDate ud fra låners interessedato",
+      "FBS-->DDB CMS: ReservationDetails(recordId,pickupBranch,expiryDate,reservationId,\\npickupDeadline,dateOfReservation,state,numberInQueue)*",
+      "Note right of DDB CMS: OBS! Der mangler et afhentningsnummer!",
+      "DDB CMS->FBS: branches(agencyId)",
+    ]
+  }
+]

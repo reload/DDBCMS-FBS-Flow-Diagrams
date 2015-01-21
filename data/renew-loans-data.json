@@ -14,5 +14,45 @@
       "Note right of FBS: OBS! renewalStatus kan indeholde både\\n\"renewed\" og deniedreasons. Burde splittes op!",
       "DDB CMS-->Låner: Vis opdateret låneliste\\n (dueDate,loanDate,titel,\\nmaterialItemNumber,renewalStatus)*"
     ]
+  },
+    {
+    "steps": [
+      "title: Fornyelse af lån: Client unauthorized",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Låner->DDB CMS: Forny lån (loanId)*",
+      "DDB CMS->FBS: renew (agencyid, patronid, materialLoanIds*)",
+      "FBS->FBS: agencyid kunne ikke verificeres",
+      "FBS-->DDB CMS: HTTP Status Code 401",
+      "DDB CMS->Låner: Fejl"
+    ]
+  },
+    {
+    "steps": [
+      "title: Fornyelse af lån: Patron not found",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Låner->DDB CMS: Forny lån (loanId)*",
+      "DDB CMS->FBS: renew (agencyid, patronid, materialLoanIds*)",
+      "FBS->FBS: patronid kunne ikke verificeres",
+      "FBS-->DDB CMS: HTTP Status Code 404",
+      "DDB CMS->Låner: Fejl"
+    ]
+  },
+    {
+    "steps": [
+      "title: Fornyelse af lån: materialLoanId not found",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Låner->DDB CMS: Forny lån (loanId)*",
+      "DDB CMS->FBS: renew (agencyid, patronid, materialLoanIds*)",
+      "FBS->FBS: materialLoanId kunne ikke verificeres",
+      "FBS-->DDB CMS: RenewLoan(loanDetails, renewalStatus)*",
+      "Note right of DDB CMS: loandetails = [],\\n renewalStatus = deniedMaterialNotFound",
+      "DDB CMS->Låner: Fejl = ukendt materiale"
+    ]
   }
 ]

@@ -41,7 +41,6 @@
       "Participant Låner",
       "Participant DDB CMS",
       "Participant FBS",
-      "Note right of DDB CMS: OBS: Dette flow er pt ikke understøttet af API",
       "Låner->DDB CMS: Se oversigt lån",
       "DDB CMS->FBS: Loans(agencyid, patronid)",
       "FBS->FBS: patronid kunne ikke verificeres",

@@ -1,0 +1,16 @@
+[
+  {
+    "steps": [
+      "title: Titel",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of DDB CMS: Note",
+      "Note right of Låner: Forudsætning:\\n 1)Auth af bibliotek\\n2) Auth af låner",
+      "Låner->DDB CMS: handling",
+      "DDB CMS->FBS: servicekald (args)",
+      "FBS-->DDB CMS: svar til CMS",
+      "DDB CMS-->Låner: svar til låner"
+    ]
+  }
+]

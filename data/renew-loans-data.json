@@ -1,0 +1,18 @@
+[
+  {
+    "steps": [
+      "title: Fornyelse af lån: OK",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of DDB CMS: OBS: * indikerer arrays",
+      "Note right of Låner: Forudsætning:\\n 1)Auth af bibliotek\\n2) Auth af låner",
+      "Låner->DDB CMS: Forny lån (loanId)*",
+      "DDB CMS->FBS: renew (agencyid, patronid, materialLoanIds*)",
+      "Note right of DDB CMS: loanDetails = {recordid,dueDate,\\nloanDate,materialItemNumber,loanId}",
+      "FBS-->DDB CMS: RenewedLoan (loanDetails, renewalStatus*)*",
+      "Note right of FBS: OBS! renewalStatus kan indeholde både\\n\"renewed\" og deniedreasons. Burde splittes op!",
+      "DDB CMS-->Låner: Vis opdateret låneliste\\n (dueDate,loanDate,titel,\\nmaterialItemNumber,renewalStatus)*"
+    ]
+  }
+]

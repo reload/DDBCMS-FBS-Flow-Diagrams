@@ -1,0 +1,17 @@
+[
+  {
+    "steps": [
+      "title: Opdater lånerinfo: OK",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of Låner: Forudsætning:\\n 1) Auth af bibliotek",
+      "Låner->DDB CMS: opdater lånerinfo",
+      "DDB CMS->FBS: patron(agencyid, Patron, pincodeChange)",
+      "Note right of DDB CMS: Patron=emailaddr,phonenr,prefpickupBranch,\\nonHold,receiveEmail,receiveMail,receiveSms",
+      "Note right of DDB CMS: OBS! MANGLER at kunne opdatere interestPeriod!",
+      "FBS-->DDB CMS: Patron=birthday,address, patronId, name, blockStatus mm + authenticated=true",
+      "DDB CMS-->Låner: låner opdateret + PatronInfo"
+    ]
+  }
+]

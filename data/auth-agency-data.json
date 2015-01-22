@@ -1,0 +1,28 @@
+[
+  {
+    "steps": [
+      "title: Authentication Bibliotek: OK",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "DDB CMS->FBS: login (agencyId, Login)",
+      "Note right of DDB CMS: Login=password,username for bibliotek",
+      "FBS->FBS: verificer Login",
+      "FBS-->DDB CMS: sessionKey",
+      "",
+      ""
+    ]
+  },
+  {
+    "steps": [
+      "title: Authentication Bibliotek: Invalid  client credentials",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "DDB CMS->FBS: login (agencyId, Login)",
+      "Note right of DDB CMS: Login=password,username for bibliotek",
+      "FBS->FBS: verificer Login",
+      "FBS-->DDB CMS: HTTP Status Code 403",
+      "",
+      ""
+    ]
+  }
+]

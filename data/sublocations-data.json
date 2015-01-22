@@ -1,0 +1,14 @@
+[
+  {
+    "steps": [
+      "title: Få sublocations for bibliotek",
+      "Note right of DDB CMS: Forudsætning:\\n 1) Auth af bibliotek",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "DDB CMS->FBS: sublocations(agencyid)",
+      "FBS-->DDB CMS: sublocationId, title",
+      "Note right of DDB CMS: Bruges til at vise i hvilket fysisk\\n opstilling på biblioteket materialet befinder sig",
+      ""
+    ]
+  }
+]

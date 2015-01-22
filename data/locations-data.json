@@ -1,0 +1,14 @@
+[
+  {
+    "steps": [
+      "title: Få locations for bibliotek",
+      "Note right of DDB CMS: Forudsætning:\\n 1) Auth af bibliotek",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "DDB CMS->FBS: locations(agencyid)",
+      "FBS-->DDB CMS: locationId, title",
+      "Note right of DDB CMS: Bruges til at vise i hvilket fysisk\\n sted på biblioteket materialet befinder sig",
+      ""
+    ]
+  }
+]

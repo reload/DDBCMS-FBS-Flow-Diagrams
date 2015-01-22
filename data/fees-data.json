@@ -1,0 +1,19 @@
+[
+  {
+    "steps": [
+      "title: Se mellemværende: OK",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of Låner: Forudsætning:\\n 1) Auth af bibliotek\\n2) Auth låner",
+      "Låner->DDB CMS: Se mellemværende",
+      "DDB CMS->FBS: fees(agencyid,patronid,includepaid=false,includenonpayable=false)",
+      "FBS-->DDB CMS: fee=payableByClient,amount,paidDate,material*,\\nreasonMessage,dueDate,type,creationDate,feeId",
+      "Note right of DDB CMS: OBS! dokumentation af paidDate siger at en fee kan betales i delmænger.\\nDet bør ikke være tilfældet",
+      "Note right of DDB CMS: Kunne være rart at kunne se afleveringsdato for materiale",
+      "Note right of DDB CMS: Hvad hvis materiale er bortkommet, sletning i brønd - og hentning af data?",
+      "Note over DDB CMS: hente titel fra brønd",
+      "DDB CMS-->Låner: Oversigt mellemværende\\n{titel,amount,materialItemNumber,creationDate,reasonMessage},\\nsamlet beløb alle fees"
+    ]
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "steps": [
+      "title: Få departments for bibliotek",
+      "Note right of DDB CMS: Forudsætning:\\n 1) Auth af bibliotek",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "DDB CMS->FBS: departments(agencyid)",
+      "FBS-->DDB CMS: departmentId, title",
+      "Note right of DDB CMS: Bruges til at vise i hvilken fysisk\\n afdeling på biblioteket materialet befinder sig",
+      ""
+    ]
+  }
+]

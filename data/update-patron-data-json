@@ -1,0 +1,20 @@
+[
+  {
+    "steps": [
+      "title: Opdater lånerinfo: OK",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of Låner: Forudsætning:\\n 1) Auth af bibliotek",
+      "Låner->DDB CMS: opdater lånerinfo",
+      "DDB CMS->FBS: patron(agencyid, cprNumber, pincode, Patron)",
+      "Note right of DDB CMS: Patron=emailaddr,phonenr,prefpickupBranch,\\nonHold?,receiveEmail,receiveMail,receiveSms",
+      "Note right of DDB CMS: OBS! MANGLER at kunne sætte interestPeriod!",
+      "Note right of DDB CMS: Skal mindst en notifikation være true?",
+      "Note right of DDB CMS: Hvorfor er onHold med i oprettelse?",
+      "FBS->FBS: Få patronInfo fra CPR",
+      "FBS-->DDB CMS: Patron=birthday,address, patronId, name, blockStatus mm.",
+      "DDB CMS-->Låner: låner oprettet + PatronInfo"
+    ]
+  }
+]

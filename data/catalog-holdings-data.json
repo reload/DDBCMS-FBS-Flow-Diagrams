@@ -1,0 +1,20 @@
+[
+  {
+    "steps": [
+      "title: Holdings: OK",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Låner->DDB CMS: Se beholdning materiale",
+      "DDB CMS->FBS: holdings(agencyid, recordid*)",
+      "FBS-->DDB CMS: (recordid, reservable, holdings*)*",
+      "Note right of DDB CMS: holding=materials,location,sublocation,department, branch",
+      "Note right of DDB CMS: OBS! mangler at kunne se antal reserveringer",
+      "Note right of DDB CMS: OBS! kan ikke se låneperioder( 7dage, 14dage etc)",
+      "Note right of DDB CMS: Material=itemNumber,available",
+      "Note right of DDB CMS: OBS! available bør istedet være\\n status med: tilgængelig, utilg, utilg=på vej\\nså rød,gul,grøn farvekodning på web",
+      "DDB CMS-->Låner: Vis beholdning",
+      ""
+    ]
+  }
+]

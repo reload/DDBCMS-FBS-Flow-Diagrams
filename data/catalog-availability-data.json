@@ -1,0 +1,18 @@
+[
+  {
+    "steps": [
+      "title: Availability: OK",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of Låner: Forudsætning:\\n1) Auth bibliotek",
+      "Note right of Låner: Lav evt. flows for hver state\\n - grøn, gul, rød i grænseflade.",
+      "Låner->DDB CMS: Se beholdning materiale",
+      "DDB CMS->FBS: availability(agencyid, recordid*)",
+      "FBS-->DDB CMS: (recordid, reservable, available)*",
+      "Note right of FBS: OBS! available er pt kun true/false.\\n Brug for states: tilgængelig,\\n utilg. udlånt, utilg. på vej",
+      "DDB CMS-->Låner: Vis beholdning",
+      ""
+    ]
+  }
+]

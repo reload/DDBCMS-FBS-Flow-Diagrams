@@ -1,0 +1,16 @@
+[
+  {
+    "steps": [
+      "title: Authentication Låner: OK",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of Låner: Forudsætning:\\n 1) Auth af bibliotek",
+      "Låner->DDB CMS: låner logger ind",
+      "DDB CMS->FBS: authenticate(agencyid, pincode, libraryNumber/CPR)",
+      "FBS-->DDB CMS: (authenticated, Patron)",
+      "Note right of DDB CMS: Patron=birthday,address, patronId, name, blockStatus mm. + authenticated=true",
+      "DDB CMS-->Låner: låner logget ind"
+    ]
+  }
+]

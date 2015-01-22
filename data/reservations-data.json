@@ -16,9 +16,9 @@
       "FBS-->DDB CMS: AgencyBranch (branchId, Title)*",
       "DDB CMS->DDB CMS: get Title from pickupBranch",
       "Note over DDB CMS: get bibliografiske\\n poster+forsidebilleder",
-      "DDB CMS->Låner: if state=readyForPickup: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede, afhentningsnr",
-      "DDB CMS->Låner: if state=reserved/InterLibRes: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede,numberInQueue",
-      "DDB CMS->Låner: if state=other: ?"
+      "DDB CMS-->Låner: if state=readyForPickup: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede, afhentningsnr",
+      "DDB CMS-->Låner: if state=reserved/InterLibRes: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede,numberInQueue",
+      "DDB CMS-->Låner: if state=other: ?"
     ]
   },
    {
@@ -33,7 +33,7 @@
       "DDB CMS->FBS: reservations(agencyid, patronid)",
       "FBS->FBS: agencyid kunne ikke verificeres",
       "FBS-->DDB CMS: HTTP Status Code 401",
-      "DDB CMS->Låner: FEJL"
+      "DDB CMS-->Låner: FEJL"
     ]
   },
    {
@@ -49,7 +49,7 @@
       "FBS->FBS: patronid kunne ikke verificeres",
       "FBS-->DDB CMS: HTTP Status Code 404",
       "Note right of DDB CMS: 404 code mangler pt.",
-      "DDB CMS->Låner: FEJL"
+      "DDB CMS-->Låner: FEJL"
     ]
   }
 ]

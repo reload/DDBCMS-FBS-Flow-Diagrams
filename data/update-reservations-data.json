@@ -16,10 +16,10 @@
       "FBS-->DDB CMS: ReservationDetails(recordId,pickupBranch,\\nexpiryDate,reservationId,pickupDeadline,\\ndateOfReservation,state,numberInQueue)*",
       "DDB CMS->FBS: branches(agencyId)",
       "FBS-->DDB CMS: AgencyBranch (branchId, Title)*",
-      "DDB CMS->DDB CMS: get Title from pickupBranch",
-      "DDB CMS->Låner: if state=readyForPickup: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede, afhentningsnr",
-      "DDB CMS->Låner: if state=reserved/InterLibRes: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede,numberInQueue",
-      "DDB CMS->Låner: if state=other: ?"
+      "DDB CMS-->DDB CMS: get Title from pickupBranch",
+      "DDB CMS-->Låner: if state=readyForPickup: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede, afhentningsnr",
+      "DDB CMS-->Låner: if state=reserved/InterLibRes: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede,numberInQueue",
+      "DDB CMS-->Låner: if state=other: ?"
     ]
   }
 ]

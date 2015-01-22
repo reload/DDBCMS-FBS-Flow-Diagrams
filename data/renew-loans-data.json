@@ -25,7 +25,7 @@
       "DDB CMS->FBS: renew (agencyid, patronid, materialLoanIds*)",
       "FBS->FBS: agencyid kunne ikke verificeres",
       "FBS-->DDB CMS: HTTP Status Code 401",
-      "DDB CMS->Låner: Fejl"
+      "DDB CMS-->Låner: Fejl"
     ]
   },
     {
@@ -38,7 +38,7 @@
       "DDB CMS->FBS: renew (agencyid, patronid, materialLoanIds*)",
       "FBS->FBS: patronid kunne ikke verificeres",
       "FBS-->DDB CMS: HTTP Status Code 404",
-      "DDB CMS->Låner: Fejl"
+      "DDB CMS-->Låner: Fejl"
     ]
   },
     {
@@ -52,7 +52,7 @@
       "FBS->FBS: materialLoanId kunne ikke verificeres",
       "FBS-->DDB CMS: RenewLoan(loanDetails, renewalStatus)*",
       "Note right of DDB CMS: loandetails = [],\\n renewalStatus = deniedMaterialNotFound",
-      "DDB CMS->Låner: Fejl = ukendt materiale"
+      "DDB CMS-->Låner: Fejl = ukendt materiale"
     ]
   }
 ]

@@ -8,9 +8,9 @@
       "Note right of Låner: Forudsætning:\\n 1) Auth af bibliotek\\n2) Auth af låner\\n3) Vis reservationer",
       "Låner->DDB CMS: slette reservationer",
       "DDB CMS->FBS: reservations(agencyid, patronid, reservationids*)",
-      "FBS->DDB CMS: {} OK",
+      "FBS-->DDB CMS: {} OK",
       "Note over Låner: Hvad hvis ikke alle kunne slettes?",
-      "DDB CMS->Låner: reservationer slettet"
+      "DDB CMS-->Låner: reservationer slettet"
     ]
   }
 ]

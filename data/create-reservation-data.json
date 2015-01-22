@@ -16,9 +16,9 @@
       "FBS-->DDB CMS: AgencyBranch (branchId, Title)*",
       "DDB CMS->DDB CMS: get Title from pickupBranch",
       "Note right of Låner: Kan state være readyForPickup?",
-      "DDB CMS->Låner: if state=readyForPickup: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede, afhentningsnr",
-      "DDB CMS->Låner: if state=reserved/InterLibRes: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede,numberInQueue",
-      "DDB CMS->Låner: if state=other: ?"
+      "DDB CMS-->Låner: if state=readyForPickup: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede, afhentningsnr",
+      "DDB CMS-->Låner: if state=reserved/InterLibRes: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede,numberInQueue",
+      "DDB CMS-->Låner: if state=other: ?"
     ]
   }
 ]

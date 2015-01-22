@@ -13,8 +13,8 @@
       "Note right of DDB CMS: Skal mindst en notifikation være true?",
       "Note right of DDB CMS: Hvorfor er onHold med i oprettelse?",
       "FBS->FBS: Få patronInfo fra CPR",
-      "FBS->DDB CMS: Patron=birthday,address, patronId, name, blockStatus mm.",
-      "DDB CMS->Låner: låner oprettet + PatronInfo"
+      "FBS-->DDB CMS: Patron=birthday,address, patronId, name, blockStatus mm.",
+      "DDB CMS-->Låner: låner oprettet + PatronInfo"
     ]
   }
 ]

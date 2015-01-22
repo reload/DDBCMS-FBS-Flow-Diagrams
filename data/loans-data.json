@@ -31,7 +31,7 @@
       "DDB CMS->FBS: Loans(agencyid, patronid)",
       "FBS->FBS: agencyid kunne ikke verificeres",
       "FBS-->DDB CMS: HTTP Status Code 401",
-      "DDB CMS->Låner: Fejl",
+      "DDB CMS-->Låner: Fejl",
       ""
     ]
   },
@@ -45,7 +45,7 @@
       "DDB CMS->FBS: Loans(agencyid, patronid)",
       "FBS->FBS: patronid kunne ikke verificeres",
       "FBS-->DDB CMS: HTTP Status Code 404",
-      "DDB CMS->Låner: Fejl",
+      "DDB CMS-->Låner: Fejl",
       ""
     ]
   }

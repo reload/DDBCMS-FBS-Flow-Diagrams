@@ -1,0 +1,24 @@
+[
+  {
+    "steps": [
+      "title: Opret reservation: OK",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of DDB CMS: OBS: * indikerer arrays",
+      "Note right of Låner: Forudsætning:\\n 1)Auth af bibliotek\\n2) Auth af låner",
+      "Låner->DDB CMS: opret reservation",
+      "DDB CMS->FBS: reservations(agencyid, patronid, reservations)*",
+      "Note right of DDB CMS: reservation = recordId, expiryDate,pickupBranch",
+      "Note right of DDB CMS: Burde expiryDate ikke være interestPeriod?",
+      "FBS-->DDB CMS: ReservationDetails(recordId,pickupBranch,\\nexpiryDate,reservationId,pickupDeadline,\\ndateOfReservation,state,numberInQueue)*",
+      "DDB CMS->FBS: branches(agencyId)",
+      "FBS-->DDB CMS: AgencyBranch (branchId, Title)*",
+      "DDB CMS->DDB CMS: get Title from pickupBranch",
+      "Note right of Låner: Kan state være readyForPickup?",
+      "DDB CMS->Låner: if state=readyForPickup: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede, afhentningsnr",
+      "DDB CMS->Låner: if state=reserved/InterLibRes: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede,numberInQueue",
+      "DDB CMS->Låner: if state=other: ?"
+    ]
+  }
+]

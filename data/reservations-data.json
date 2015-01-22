@@ -48,6 +48,7 @@
       "DDB CMS->FBS: reservations(agencyid, patronid)",
       "FBS->FBS: patronid kunne ikke verificeres",
       "FBS-->DDB CMS: HTTP Status Code 404",
+      "Note right of DDB CMS: 404 code mangler pt."
       "DDB CMS->Låner: FEJL"
     ]
   }

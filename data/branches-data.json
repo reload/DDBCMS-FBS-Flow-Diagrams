@@ -1,0 +1,16 @@
+[
+  {
+    "steps": [
+      "title: Få branches for bibliotek",
+      "Note right of DDB CMS: Forudsætning:\\n 1) Auth af bibliotek ",
+      "",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "DDB CMS->FBS: branches(agencyid)",
+      "FBS-->DDB CMS: branchid, title",
+      "Note right of DDB CMS: Brug til at slå title(branch name) op efter ISIL\\neller til liste hvor bruger kan vælge afhentningssted",
+      "",
+      ""
+    ]
+  }
+]

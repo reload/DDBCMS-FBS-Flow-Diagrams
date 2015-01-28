@@ -5,15 +5,32 @@
       "Participant Låner",
       "Participant DDB CMS",
       "Participant FBS",
+      "Note right of DDB CMS: * angiver arrays",
       "Låner->DDB CMS: Se beholdning materiale",
+      "Note right of DDB CMS: Forudsætning:\\n1) Authentification bibliotek",
       "DDB CMS->FBS: holdings(agencyid, recordid*)",
-      "FBS-->DDB CMS: (recordid, reservable, holdings*)*",
-      "Note right of DDB CMS: holding=materials,location,sublocation,department, branch",
-      "Note right of DDB CMS: OBS! mangler at kunne se antal reserveringer",
-      "Note right of DDB CMS: OBS! kan ikke se låneperioder( 7dage, 14dage etc)",
-      "Note right of DDB CMS: Material=itemNumber,available",
-      "Note right of DDB CMS: OBS! available bør istedet være\\n status med: tilgængelig, utilg, utilg=på vej\\nså rød,gul,grøn farvekodning på web",
+      "FBS->FBS: verificerer agencyid, finder\\n HoldingsForBibliographicRecords",
+      "FBS-->DDB CMS: 200 OK,(recordid, reservable, holdings*)*",
+      "Note left of FBS: holding=materials,location,sublocation,department,branch",
+      "Note left of FBS: Material=itemNumber,available",
+      "Note right of DDB CMS: OBS!\\n- mangler at kunne se antal reserveringer\\n- kan ikke se låneperioder (7dage, 14dage etc)\\n-available bør istedet være status med: tilgængelig, utilg, utilg=på vej",
       "DDB CMS-->Låner: Vis beholdning",
+      ""
+    ]
+  },
+  {
+    "steps": [
+      "title: Holdings: Client unauthorized",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of DDB CMS: * angiver arrays",
+      "Låner->DDB CMS: Se beholdning materiale",
+      "Note right of DDB CMS: Forudsætning:\\n1) Authentification bibliotek",
+      "DDB CMS->FBS: holdings(agencyid, recordid*)",
+      "FBS->FBS: verificerer agencyid",
+      "FBS-->DDB CMS: 401 Client unauthorized",
+      "DDB CMS-->Låner: Fejlbesked, kan ikke vise beholdning",
       ""
     ]
   }

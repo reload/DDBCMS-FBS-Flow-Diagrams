@@ -1,20 +1,20 @@
 [
   {
     "steps": [
-      "title: Authentication Bibliotek: OK",
+      "title: Authentification Bibliotek: OK",
       "Participant DDB CMS",
       "Participant FBS",
       "DDB CMS->FBS: login (agencyId, Login)",
       "Note right of DDB CMS: Login=password,username for bibliotek",
       "FBS->FBS: verificer Login",
       "FBS-->DDB CMS: sessionKey",
-      "",
+      "DDB CMS->DDB CMS: gem sessionKey",
       ""
     ]
   },
   {
     "steps": [
-      "title: Authentication Bibliotek: Invalid  client credentials",
+      "title: Authentification Bibliotek: Invalid client credentials",
       "Participant DDB CMS",
       "Participant FBS",
       "DDB CMS->FBS: login (agencyId, Login)",

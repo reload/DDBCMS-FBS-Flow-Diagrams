@@ -5,13 +5,31 @@
       "Participant Låner",
       "Participant DDB CMS",
       "Participant FBS",
-      "Note right of Låner: Forudsætning:\\n1) Auth bibliotek",
-      "Note right of Låner: Lav evt. flows for hver state\\n - grøn, gul, rød i grænseflade.",
-      "Låner->DDB CMS: Se tilgængelighed materiale",
-      "DDB CMS->FBS: availability(agencyid, recordid*)",
-      "FBS-->DDB CMS: (recordid, reservable, available)*",
-      "Note right of FBS: OBS! available er pt kun true/false.\\n Brug for states: tilgængelig,\\n utilg. udlånt, utilg. på vej",
+      "Note right of DDB CMS: * angiver arrays",
+      "Låner->DDB CMS: Se tilgængelighed materialer",
+      "Note right of DDB CMS: Forudsætning:\\n1) Authentification bibliotek",
+      "DDB CMS->FBS: availability(agencyid, recordids*)",
+      "FBS->FBS: verificerer agencyid, finder\\n HoldingsForBibliographicRecords",
+      "FBS-->DDB CMS: 200 OK,(recordid, reservable, available)*",
+      "Note left of FBS: reservable=true/false",
+      "Note left of FBS: available=true/false\\nburde være ja/nej/snart",
       "DDB CMS-->Låner: Vis tilgængelighed",
+      ""
+    ]
+  },
+  {
+    "steps": [
+      "title: Availability: Client unauthorized",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of DDB CMS: * angiver arrays",
+      "Låner->DDB CMS: Se tilgængelighed materialer",
+      "Note right of DDB CMS: Forudsætning:\\n1) Authentification bibliotek",
+      "DDB CMS->FBS: availability(agencyid, recordids*)",
+      "FBS->FBS: verificerer agencyid",
+      "FBS-->DDB CMS: 401 Client unauthorized",
+      "DDB CMS-->Låner: Vis materialer uden\\n oplysninger om tilgængelighed",
       ""
     ]
   }

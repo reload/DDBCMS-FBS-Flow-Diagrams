@@ -5,15 +5,46 @@
       "Participant Låner",
       "Participant DDB CMS",
       "Participant FBS",
-      "Note right of Låner: Forudsætning:\\n 1) Auth af bibliotek\\n2) Auth låner",
+      "Note right of Låner: Forudsætning:\\n 1) Authentification af bibliotek\\n2) Auth låner",
+      "Note right of DDB CMS: * angiver arrays",
       "Låner->DDB CMS: Se mellemværende",
       "DDB CMS->FBS: fees(agencyid,patronid,includepaid=false,includenonpayable=false)",
-      "FBS-->DDB CMS: fee=payableByClient,amount,paidDate,material*,\\nreasonMessage,dueDate,type,creationDate,feeId",
-      "Note right of DDB CMS: OBS! dokumentation af paidDate siger at en fee kan betales i delmænger.\\nDet bør ikke være tilfældet",
-      "Note right of DDB CMS: Kunne være rart at kunne se afleveringsdato for materiale",
-      "Note right of DDB CMS: Hvad hvis materiale er bortkommet, sletning i brønd - og hentning af data?",
+      "FBS->FBS: verificerer agencyid, finder fees",
+      "FBS-->DDB CMS: 200 OK, fees*",
+      "Note left of FBS: fee=payableByClient,amount,paidDate,material*,\\nreasonMessage,dueDate,type,creationDate,feeId",
+      "Note left of FBS: material=recordid,materialItemNumber",
+      "Note left of FBS: Mangler afleveringsdato for materiale",
       "Note over DDB CMS: hente titel fra brønd",
-      "DDB CMS-->Låner: Oversigt mellemværende\\n{titel,amount,materialItemNumber,creationDate,reasonMessage},\\nsamlet beløb alle fees"
+      "DDB CMS-->Låner: Vis mellemværende\\n{titel,amount,materialItemNumber,creationDate,reasonMessage}*,\\n+samlet fees beløb"
+    ]
+  },
+    {
+    "steps": [
+      "title: Se mellemværende: Client unauthorized",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of Låner: Forudsætning:\\n 1) Authentification af bibliotek\\n2) Auth låner",
+      "Låner->DDB CMS: Se mellemværende",
+      "DDB CMS->FBS: fees(agencyid,patronid,includepaid=false,includenonpayable=false)",
+      "FBS->FBS: verificerer agencyid",
+      "FBS-->DDB CMS: 401 Client unauthorized",
+      "DDB CMS-->Låner: Fejlbesked. Kan ikke vise mellemværende"
+    ]
+  },
+    {
+    "steps": [
+      "title: Se mellemværende: Patron not found",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of Låner: Forudsætning:\\n 1) Authentification af bibliotek\\n2) Auth låner",
+      "Låner->DDB CMS: Se mellemværende",
+      "DDB CMS->FBS: fees(agencyid,patronid,includepaid=false,includenonpayable=false)",
+      "FBS->FBS: verificerer agencyid, verificerer patronid??",
+      "FBS-->DDB CMS: ???",
+      "DDB CMS-->Låner: ???"
     ]
   }
 ]
+

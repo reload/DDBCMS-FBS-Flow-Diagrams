@@ -1,38 +1,21 @@
 [
   {
     "steps": [
-      "title: Opret ny låner: OK Succesfuldt",
+      "title: Opret ny låner: OK",
       "Participant Låner",
       "Participant DDB CMS",
       "Participant FBS",
       "Note right of Låner: Forudsætning:\\n 1) Auth af bibliotek",
       "Låner->DDB CMS: opret låner",
       "DDB CMS->FBS: patron(agencyid, cprNumber, pincode, Patron)",
-      "Note right of DDB CMS: Patron=emailaddr,phonenr,prefpickupBranch,\\nonHold?,receiveEmail,receiveMail,receiveSms",
-      "Note right of DDB CMS: OBS! MANGLER at kunne sætte interestPeriod!",
-      "Note right of DDB CMS: Skal mindst en notifikation være true?",
-      "Note right of DDB CMS: Hvorfor er onHold med i oprettelse?",
+      "Note right of DDB CMS: Patron=emailaddr,phonenr,prefpickupBranch,\\nonHold,receiveEmail,receiveMail,receiveSms",
       "FBS->FBS: verificer patron",
-      "FBS-->DDB CMS: Patron=birthday,address, patronId, name, blockStatus mm. + authenticated=true",
-      "DDB CMS-->Låner: authenticated + PatronInfo"
+      "FBS-->DDB CMS: authenticated+Patron{birthday,address, patronId, name, blockStatus, mm}",
+      "DDB CMS-->Låner: if(authenticated=true), konfirmation,log ind+return Patron",
+      "DDB CMS-->Låner: if (authenticated=false) Fejl oprettelse"
     ]
   },
-    {
-    "steps": [
-      "title: Opret ny låner: OK men afvist",
-      "Participant Låner",
-      "Participant DDB CMS",
-      "Participant FBS",
-      "Note right of Låner: Forudsætning:\\n 1) Auth af bibliotek",
-      "Låner->DDB CMS: opret låner",
-      "DDB CMS->FBS: patron(agencyid, cprNumber, pincode, Patron)",
-      "Note right of DDB CMS: Patron=emailaddr,phonenr,prefpickupBranch,\\nonHold?,receiveEmail,receiveMail,receiveSms",
-      "FBS->FBS: verificer patron",
-      "FBS-->DDB CMS: authenticated = false",
-      "DDB CMS-->Låner: !authenticated"
-    ]
-  },
-    {
+  {
     "steps": [
       "title: Opret ny låner: Client unauthorized",
       "Participant Låner",

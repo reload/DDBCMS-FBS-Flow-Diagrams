@@ -9,13 +9,13 @@
       "Note right of Låner: Forudsætning:\\n 1)Auth af bibliotek\\n2) Auth af låner",
       "Låner->DDB CMS: Forny lån (loanId)*",
       "DDB CMS->FBS: renew (agencyid, patronid, materialLoanIds*)",
-      "Note right of DDB CMS: loanDetails = {recordid,dueDate,\\nloanDate,materialItemNumber,loanId}",
       "FBS-->DDB CMS: RenewedLoan (loanDetails, renewalStatus*)*",
-      "Note right of FBS: OBS! renewalStatus kan indeholde både\\n\"renewed\" og deniedreasons. Burde splittes op!",
-      "DDB CMS-->Låner: Vis opdateret låneliste\\n (dueDate,loanDate,titel,\\nmaterialItemNumber,renewalStatus)*"
+      "Note left of FBS: loanDetails = {recordid,dueDate,\\nloanDate,materialItemNumber,loanId}",
+      "Note over DDB CMS: Hent bibliografiske poster(titel)",
+      "DDB CMS-->Låner: Vis opdateret låneliste\\n ((ny)dueDate,loanDate,bibliografisk post(titel),\\nmaterialItemNumber,renewalStatus)*"
     ]
   },
-    {
+  {
     "steps": [
       "title: Fornyelse af lån: Client unauthorized",
       "Participant Låner",
@@ -28,7 +28,7 @@
       "DDB CMS-->Låner: Fejl"
     ]
   },
-    {
+  {
     "steps": [
       "title: Fornyelse af lån: Patron not found",
       "Participant Låner",
@@ -41,7 +41,7 @@
       "DDB CMS-->Låner: Fejl"
     ]
   },
-    {
+  {
     "steps": [
       "title: Fornyelse af lån: materialLoanId not found",
       "Participant Låner",

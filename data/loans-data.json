@@ -17,7 +17,7 @@
       "Brønden-->DDB CMS: bibliografiske poster (titel, forfatter, materialetype)*",
       "DDB CMS->MoreInfo: Hent forsidebilleder (recordId)*",
       "MoreInfo-->DDB CMS: Forsidebilleder",
-      "DDB CMS->DDB CMS: Beregn antal lån, sum(loans)",
+      "DDB CMS->DDB CMS: Beregn antal lån: sum(loans)",
       "DDB CMS-->Låner: Vis oversigt lån:\\n (bibliografisk post,dueDate,\\nloanDate,materialItemNumber,\\nisRenewable)*\\nif isRenewable=false\\n => renewalStatuslist",
       "DDB CMS-->Låner: Antal lån ialt"
     ]

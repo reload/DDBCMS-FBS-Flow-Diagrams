@@ -18,7 +18,7 @@
       "FBS-->DDB CMS: AgencyBranch (branchId, Title)*",
       "DDB CMS->DDB CMS: get BranchTitle from pickupBranch/branchId",
       "Note over DDB CMS: Hent bibliografiske\\n poster+forsidebilleder",
-      "DDB CMS-->Låner: if state=readyForPickup: expiryDate,\\ndateOfReservation,state,BranchTitle,\\nbibliografisk post,forsidebillede",
+      "DDB CMS-->Låner: if state=readyForPickup: \\ndateOfReservation,state,BranchTitle,\\nbibliografisk post,forsidebillede",
       "DDB CMS-->Låner: if state=reserved/InterLibRes: expiryDate,\\ndateOfReservation,state,BranchTitle,\\nbibliografisk post,forsidebillede,numberInQueue",
       "DDB CMS-->Låner: if state=other: ?"
     ]

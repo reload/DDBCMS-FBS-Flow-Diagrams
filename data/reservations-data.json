@@ -17,7 +17,7 @@
       "DDB CMS->DDB CMS: Beregn antal res. materialer\\ncount(ReservationDetails)",
       "DDB CMS->DDB CMS: Beregn antal res. klar til afhentning\\ncount(state=redayForPickup)",
       "Note over DDB CMS: Hent bibliografiske\\n poster+forsidebilleder",
-      "DDB CMS-->Låner: if state=readyForPickup: expiryDate,\\ndateOfReservation,state,BranchTitle,\\nbibliografisk post,forsidebillede",
+      "DDB CMS-->Låner: if state=readyForPickup:\\ndateOfReservation,state,BranchTitle,\\nbibliografisk post,forsidebillede",
       "DDB CMS-->Låner: if state=reserved/InterLibRes: expiryDate,\\ndateOfReservation,state,BranchTitle,\\nbibliografisk post,forsidebillede,numberInQueue",
       "DDB CMS-->Låner: if state=other: ?",
       "DDB CMS-->Låner: Antal res.materialer + antal mat. klar til afh."

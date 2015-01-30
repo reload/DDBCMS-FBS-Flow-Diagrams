@@ -9,7 +9,6 @@
       "Låner->DDB CMS: slette reservationer",
       "DDB CMS->FBS: reservations(agencyid, patronid, reservationids*)",
       "FBS-->DDB CMS: {} OK",
-      "Note over Låner: Hvad hvis ikke alle kunne slettes?",
       "DDB CMS-->Låner: reservationer slettet"
     ]
   }

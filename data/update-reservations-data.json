@@ -7,19 +7,33 @@
       "Participant FBS",
       "Note right of DDB CMS: OBS: * indikerer arrays",
       "Note right of Låner: Forudsætning:\\n 1) Auth af bibliotek\\n2) Auth af låner\\n3) Vis reservationer",
-      "Låner->DDB CMS: ændre reservationer",
+      "Låner->DDB CMS: ændre reservationer (interestPeriod, pickupBranch)*",
+      "DDB CMS->DDB CMS: Beregn expiryDate ud fra interestPeriod og dags dato",
       "DDB CMS->FBS: reservations(agencyid, patronid, reservations)*",
       "Note right of DDB CMS: reservation = expiryDate,pickupBranch,reservationId",
-      "Note right of FBS: OBS! pickupBranch bør ikke\\n sættes til default, hvis ikke med.",
-      "Note right of DDB CMS: Burde expiryDate ikke være interestPeriod?",
-      "Note over FBS: Hvad hvis update ikke går godt?",
+      "FBS->FBS:",
       "FBS-->DDB CMS: ReservationDetails(recordId,pickupBranch,\\nexpiryDate,reservationId,pickupDeadline,\\ndateOfReservation,state,numberInQueue)*",
-      "DDB CMS->FBS: branches(agencyId)",
+       "DDB CMS->FBS: branches(agencyId)",
       "FBS-->DDB CMS: AgencyBranch (branchId, Title)*",
-      "DDB CMS-->DDB CMS: get Title from pickupBranch",
-      "DDB CMS-->Låner: if state=readyForPickup: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede, afhentningsnr",
-      "DDB CMS-->Låner: if state=reserved/InterLibRes: expiryDate,\\ndateOfReservation,state,(branch)Title,\\nbibliografisk post,forsidebillede,numberInQueue",
+      "DDB CMS->DDB CMS: get BranchTitle from pickupBranch/branchId",
+      "Note over DDB CMS: Hent bibliografiske\\n poster+forsidebilleder",
+      "DDB CMS-->Låner: if state=readyForPickup:\\ndateOfReservation,state,BranchTitle,\\nbibliografisk post,forsidebillede",
+      "DDB CMS-->Låner: if state=reserved/InterLibRes: expiryDate,\\ndateOfReservation,state,BranchTitle,\\nbibliografisk post,forsidebillede,numberInQueue",
       "DDB CMS-->Låner: if state=other: ?"
+    ]
+  },
+  {
+    "steps": [
+      "title: Ændre reservation: Client unauthorized",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of Låner: Forudsætning:\\n 1)Auth af bibliotek\\n2) Auth af låner",
+      "Låner->DDB CMS: Ændre reservation",
+      "DDB CMS->FBS: reservations(agencyid, patronid, reservations)*",
+      "FBS->FBS: agencyid kunne ikke verificeres",
+      "FBS-->DDB CMS: HTTP Status Code 401",
+      "DDB CMS-->Låner: FEJL"
     ]
   }
 ]

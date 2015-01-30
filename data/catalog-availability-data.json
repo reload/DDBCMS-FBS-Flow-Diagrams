@@ -9,11 +9,11 @@
       "Låner->DDB CMS: Se tilgængelighed materialer",
       "Note right of DDB CMS: Forudsætning:\\n1) Authentification bibliotek",
       "DDB CMS->FBS: availability(agencyid, recordids*)",
-      "FBS->FBS: verificerer agencyid, finder\\n Availability",
+      "FBS->FBS: verificerer agencyid, finder\\n availability",
       "FBS-->DDB CMS: 200 OK,(recordid, reservable, available)*",
       "Note left of FBS: reservable=true/false",
-      "Note left of FBS: available=true/false\\nburde være ja/nej/snart",
-      "DDB CMS-->Låner: Vis tilgængelighed",
+      "Note left of FBS: available=true/false",
+      "DDB CMS-->Låner: Vis tilgængelighed (available, reservable)",
       ""
     ]
   },

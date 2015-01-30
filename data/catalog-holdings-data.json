@@ -13,7 +13,6 @@
       "FBS-->DDB CMS: 200 OK,(recordid, reservable, holdings*)*",
       "Note left of FBS: holding=materials,location,sublocation,department,branch",
       "Note left of FBS: Material=itemNumber,available",
-      "Note right of DDB CMS: OBS!\\n- mangler at kunne se antal reserveringer\\n- kan ikke se låneperioder (7dage, 14dage etc)\\n-available bør istedet være status med: tilgængelig, utilg, utilg=på vej",
       "DDB CMS-->Låner: Vis beholdning",
       ""
     ]

@@ -13,8 +13,8 @@
       "FBS-->DDB CMS: 200 OK, fees*",
       "Note left of FBS: fee=payableByClient,amount,paidDate,material*,\\nreasonMessage,dueDate,type,creationDate,feeId",
       "Note left of FBS: material=recordid,materialItemNumber",
-      "Note left of FBS: Mangler afleveringsdato for materiale",
-      "Note over DDB CMS: hente titel fra brønd",
+      "Note over DDB CMS: Hente bibliografiske poster (titel)",
+      "DDB CMS->DDB CMS: Beregn samlet beløb: sum(amounts)",
       "DDB CMS-->Låner: Vis mellemværende\\n{titel,amount,materialItemNumber,creationDate,reasonMessage}*,\\n+samlet fees beløb"
     ]
   },
@@ -30,20 +30,6 @@
       "FBS->FBS: verificerer agencyid",
       "FBS-->DDB CMS: 401 Client unauthorized",
       "DDB CMS-->Låner: Fejlbesked. Kan ikke vise mellemværende"
-    ]
-  },
-    {
-    "steps": [
-      "title: Se mellemværende: Patron not found",
-      "Participant Låner",
-      "Participant DDB CMS",
-      "Participant FBS",
-      "Note right of Låner: Forudsætning:\\n 1) Authentification af bibliotek\\n2) Auth låner",
-      "Låner->DDB CMS: Se mellemværende",
-      "DDB CMS->FBS: fees(agencyid,patronid,includepaid=false,includenonpayable=false)",
-      "FBS->FBS: verificerer agencyid, verificerer patronid??",
-      "FBS-->DDB CMS: ???",
-      "DDB CMS-->Låner: ???"
     ]
   }
 ]

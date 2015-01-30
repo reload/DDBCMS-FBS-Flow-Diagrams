@@ -14,11 +14,12 @@
       "FBS-->DDB CMS: (isRenewable, loanDetails, renewalStatusList)*",
       "Note right of DDB CMS: loanDetails = (recordId,dueDate,\\nloanDate,materialItemNumner,loanId)",
       "DDB CMS->Brønden: Hent bibliografiske poster (recordId)*",
-      "Brønden-->DDB CMS: bibliografiske poster (titel, forfatter,..)*",
+      "Brønden-->DDB CMS: bibliografiske poster (titel, forfatter, materialetype)*",
       "DDB CMS->MoreInfo: Hent forsidebilleder (recordId)*",
       "MoreInfo-->DDB CMS: Forsidebilleder",
-      "DDB CMS-> DDB CMS: loanId gemmes til andre kald",
-      "DDB CMS-->Låner: Vis oversigt lån:\\n (titel,forside,dueDate,\\nloanDate,materialNumber,\\nisRenewable)*\\nif isRenewable=false\\n => renewalStatuslist"
+      "DDB CMS->DDB CMS: Beregn antal lån, sum(loans)",
+      "DDB CMS-->Låner: Vis oversigt lån:\\n (bibliografisk post,dueDate,\\nloanDate,materialItemNumber,\\nisRenewable)*\\nif isRenewable=false\\n => renewalStatuslist",
+      "DDB CMS-->Låner: Antal lån ialt"
     ]
   },
     {

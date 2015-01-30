@@ -5,13 +5,43 @@
       "Participant Låner",
       "Participant DDB CMS",
       "Participant FBS",
-      "Note right of Låner: Forudsætning:\\n 1) Auth af bibliotek",
+      "Note right of Låner: Forudsætning:\\n 1) Auth af bibliotek\\n2) Auth af låner",
       "Låner->DDB CMS: opdater lånerinfo",
-      "DDB CMS->FBS: patron(agencyid, Patron, pincodeChange)",
-      "Note right of DDB CMS: Patron=emailaddr,phonenr,prefpickupBranch,\\nonHold,receiveEmail,receiveMail,receiveSms",
-      "Note right of DDB CMS: OBS! MANGLER at kunne opdatere interestPeriod!",
-      "FBS-->DDB CMS: Patron=birthday,address, patronId, name, blockStatus mm + authenticated=true",
-      "DDB CMS-->Låner: låner opdateret + PatronInfo"
+      "DDB CMS->FBS: patron(agencyid, PatronSettings, pincodeChange)",
+      "Note right of DDB CMS: PatronSettings=emailaddr,phonenr,prefpickupBranch,\\nonHold,receiveEmail,receiveMail,receiveSms",
+      "Note right of DDB CMS: pincodeChange=new pincode,libraryCardNumber/cpr",
+      "FBS-->DDB CMS: authenticated, Patron={birthday,address, patronId, name, blockStatus mm}",
+      "DDB CMS-->Låner: if (authenticated=true): Patron",
+      "DDB CMS-->Låner: if (authenticated=false): Fejl\\n(men hvorfor auth i update? Auth'er ikke.)",
+      "DDB CMS-->Låner: if blockStatus: show blockMessage"
+    ]
+  },
+    {
+    "steps": [
+      "title: Opret ny låner: Client unauthorized",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of Låner: Forudsætning:\\n 1) Auth af bibliotek\\n2) Auth af låner",
+      "Låner->DDB CMS: opdater lånerinfo",
+      "DDB CMS->FBS: patron(agencyid, PatronSettings, pincodeChange)",
+      "FBS->FBS: agencyid findes ikke",
+      "FBS-->DDB CMS: HTTP Status Code 401",
+      "DDB CMS-->Låner: Bibliotek findes ikke"
+    ]
+  },
+    {
+    "steps": [
+      "title: Opret ny låner: Patron not found",
+      "Participant Låner",
+      "Participant DDB CMS",
+      "Participant FBS",
+      "Note right of Låner: Forudsætning:\\n 1) Auth af bibliotek\\n2) Auth af låner",
+      "Låner->DDB CMS: opdater lånerinfo",
+       "DDB CMS->FBS: patron(agencyid, PatronSettings, pincodeChange)",
+      "FBS->FBS: patronid findes ikke",
+      "FBS-->DDB CMS: HTTP Status Code 404",
+      "DDB CMS-->Låner: Låner eksisterer ikke"
     ]
   }
 ]

@@ -1,25 +1,90 @@
+### WARNING
+**This `master` branch contains the `v2.x` codebase for ZeroClipboard! For the `v1.x` codebase, see the [`1.x-master`](https://github.com/zeroclipboard/zeroclipboard/tree/1.x-master) branch instead.**
+
+
 # Overview
 
-The *ZeroClipboard* JavaScript library provides an easy way to copy text to the clipboard using an invisible Adobe
-Flash movie.  The "Zero" signifies that the library is invisible and the user interface is left entirely up to you.
+The ZeroClipboard library provides an easy way to copy text to the clipboard using an invisible [Adobe Flash](http://en.wikipedia.org/wiki/Adobe_Flash) movie and a [JavaScript](http://en.wikipedia.org/wiki/JavaScript) interface. The "Zero" signifies that the library is invisible and the user interface is left entirely up to you.
 
-Browsers won't let you access the clipboard directly. So this library puts a Flash object on the page to proxy the
-clipboard for you. The library will move and resize over all the clipped objects.
+This is achieved by automatically floating the invisible movie on top of a [DOM](http://en.wikipedia.org/wiki/Document_Object_Model) element of your choice. Standard mouse events are even propagated out to your DOM element, so you can still have rollover and mousedown effects.
+
+
+## Limitations
+
+### User Interaction Required
+
+Due to browser and Flash security restrictions, this clipboard injection can _**ONLY**_ occur when
+the user clicks on the invisible Flash movie. A simulated `click` event from JavaScript will not
+suffice as this would enable [clipboard poisoning](http://www.computerworld.com/s/article/9117268/Adobe_patches_Flash_clickjacking_and_clipboard_poisoning_bugs).
+
+### Synchronicity Required During `copy`
+
+If a handler of `copy` event intends to modify the pending data for clipboard
+injection, it _MUST_ operate synchronously in order to maintain the temporarily elevated
+permissions granted by the user's `click` event. The most common "gotcha" for this restriction is
+if someone wants to make an asynchronous XMLHttpRequest in response to the `copy` event to get the
+data to inject &mdash; this will not work. You must make it a _synchronous_ XMLHttpRequest instead,
+or do the work in advance before the `copy` event is fired.
+
+### Browser-Specific Limitations
+
+See [Support](#support) and [Browser-Specific Known Issues](#browser-specific-known-issues) below.
+
+### OS-Specific Limitations
+
+See [OS Considerations](#os-considerations) below.
+
+### Sandboxing Limitations
+
+See [`sandbox`ed `iframe` Limitations](#sandboxed-iframe-limitations) below.
+
+### Protocol Limitations
+
+See [Cross-Protocol Limitations](#cross-protocol-limitations) and [`file://` Protocol Limitations](#file-protocol-limitations) below.
+
 
 
 ## Installation
 
-If you are installing for Node:
+### [NPM](https://www.npmjs.org/) [![NPM version](https://badge.fury.io/js/zeroclipboard.png)](https://www.npmjs.org/package/zeroclipboard)
 
 ```shell
 npm install zeroclipboard
 ```
 
-If you are installing for the web, you can use Bower:
+### [Bower](http://bower.io/) [![Bower version](https://badge.fury.io/bo/zeroclipboard.png)](http://bower.io/search/?q=zeroclipboard)
 
 ```shell
 bower install zeroclipboard
 ```
+
+### [SPM](http://spmjs.io/) [![SPM version](http://spmjs.io/badge/zeroclipboard)](http://spmjs.io/package/zeroclipboard)
+
+```shell
+spm install zeroclipboard
+```
+
+### [Component](https://github.com/componentjs/component) [![Component version](https://badge.fury.io/gh/zeroclipboard%2Fzeroclipboard.png)](http://component.github.io/?q=zeroclipboard)
+
+```shell
+component install zeroclipboard/zeroclipboard
+```
+
+### [PHP Composer](https://getcomposer.org/) [![PHP version](https://badge.fury.io/ph/zeroclipboard%2Fzeroclipboard.svg)](https://packagist.org/packages/zeroclipboard/zeroclipboard)
+
+For any PHP Composer users, ZeroClipboard is also [available on Packagist](https://packagist.org/packages/zeroclipboard/zeroclipboard).
+
+### [Ruby Gem](https://rubygems.org/)
+
+For any Rails users, the [`zeroclipboard-rails` Ruby Gem](https://rubygems.org/gems/zeroclipboard-rails) is available to automatically add ZeroClipboard into your Rails asset pipeline.
+
+
+## CDN Availability
+
+If you'd like to use ZeroClipboard hosted via a CDN (content delivery network), you can try:
+
+ - **cdnjs**: http://cdnjs.com/libraries/zeroclipboard
+ - **jsDelivr**: http://www.jsdelivr.com/#!zeroclipboard
 
 
 ## Setup
@@ -30,177 +95,90 @@ To use the library, simply include the following JavaScript file in your page:
 <script type="text/javascript" src="ZeroClipboard.js"></script>
 ```
 
-You also need to have the "`ZeroClipboard.swf`" file available to the browser.  If this file is located in the same
-directory as your web page, then it will work out of the box.  However, if the SWF file is hosted elsewhere, you need
-to set the URL like this (place this code _after_ the script tag):
+You also need to have the "`ZeroClipboard.swf`" file available to the browser.  If this file is
+located in the same directory as your ZeroClipboard.js files, then it will work out of the box.  However, if the
+SWF file is hosted elsewhere, you need to set the URL like this (place this code _after_ the script
+tag):
 
 ```js
-ZeroClipboard.config( { moviePath: 'http://YOURSERVER/path/ZeroClipboard.swf' } );
+ZeroClipboard.config( { swfPath: "http://YOURSERVER/path/ZeroClipboard.swf" } );
 ```
+
+### Using the Minified Library
+If you intend to use the minified version of ZeroClipboard, you will likely also want to do one of the following two things:
+ 1. Include the SourceMap file ("ZeroClipboard.min.map") in the same hosted directory in order to be able to debug as unminified JavaScript in your browser dev tools.
+ 2. Open the "ZeroClipboard.min.js" file and remove the last line. It is a comment that begins with `//# sourceMappingURL=`. Removing this line will prevent the browsers' dev tools from requesting the file.
+
+#### SourceMap Error Messages
+The SourceMap is not _required_ for normal operation and typically will not be requested by the browser unless the dev tools are open. If you _**do NOT**_ include the SourceMap in your hosted directory [or remove the `sourceMappingURL` comment], then you may see a variety of confusing warnings in your dev tools' JavaScript console:
+
+##### Safari
+```
+[Error] Failed to load resource: the server responded with a status of 404 (Not Found) (ZeroClipboard.min.map, line 0)
+```
+
+##### Firefox
+```
+http://YOURSERVER/path/ZeroClipboard.min.js is being assigned a //# sourceMappingURL, but already has one
+```
+
+##### Chrome
+You may not see any error message in Chrome's console. However, you will likely see 404 responses in the Network tab, e.g.
+```
+ZeroClipboard.min.map   404 (Not Found)
+```
+
+##### IE
+You will likely see an error message in the Debugger tab.
 
 
 ## Clients
 
-Now you are ready to create one or more _clients_.  A client is a single instance of the clipboard library on the page,
-linked to one or more DOM elements. Here is how to create a client instance:
+Now you are ready to create one or more _clients_.  A client is a single instance of the clipboard
+library on the page, linked to one or more DOM elements. Here is how to create a client instance:
 
 ```js
 var client = new ZeroClipboard();
 ```
 
-You can also include an element or array of elements in the new client. _**This example uses jQuery to find "copy buttons"._
+You can also include an element or array of elements in the new client. _\*\*This example uses jQuery to find "copy buttons"._
 
 ```js
 var client = new ZeroClipboard($(".copy-button"));
 ```
 
-Next, you can set some configuration options.
 
+## API
 
-## Configuration Options
+For the full API documentation, see [api/ZeroClipboard.md](api/ZeroClipboard.md). The full set of
+[Configuration Options](api/ZeroClipboard.md#configuration-options) are also documented there.
 
-These are default values for the global configurations options. You should generally update these _before_ you create your clients.
-
-```js
-var _globalConfig = {
-  // NOTE: For versions >= v1.3.x and < v2.x, you must use `swfPath` by setting `moviePath`:
-  //   `ZeroClipboard.config({ moviePath: ZeroClipboard.config("swfPath") });`
-  // URL to movie, relative to the page. Default value will be "ZeroClipboard.swf" under the
-  // same path as the ZeroClipboard JS file.
-  swfPath: "path/to/ZeroClipboard.swf",
-
-  // SWF inbound scripting policy: page domains that the SWF should trust. (single string or array of strings)
-  trustedDomains: [window.location.host],
-
-  // Include a "nocache" query parameter on requests for the SWF
-  cacheBust: true,
-
-  // Forcibly set the hand cursor ("pointer") for all clipped elements
-  forceHandCursor: false,
-
-  // The z-index used by the Flash object. Max value (32-bit): 2147483647
-  zIndex: 999999999,
-
-  // Debug enabled: send `console` messages with deprecation warnings, etc.
-  debug: true,
-
-  // Sets the title of the `div` encapsulating the Flash object
-  title: null,
-
-  // Setting this to `false` would allow users to handle calling `ZeroClipboard.activate(...);`
-  // themselves instead of relying on our per-element `mouseover` handler
-  autoActivate: true,
-
-
-  /** @deprecated */
-  // The class used to indicate that a clipped element is being hovered over
-  hoverClass: "zeroclipboard-is-hover",
-
-  /** @deprecated */
-  // The class used to indicate that a clipped element is active (is being clicked)
-  activeClass: "zeroclipboard-is-active",
-
-  /** @deprecated */
-  // DEPRECATED!!! Use `trustedDomains` instead!
-  // SWF inbound scripting policy: page origins that the SWF should trust. (single string or array of strings)
-  trustedOrigins: null,
-
-  /** @deprecated */
-  // SWF outbound scripting policy. Possible values: "never", "sameDomain", "always"
-  allowScriptAccess: null,
-
-  /** @deprecated */
-  // Include a "nocache" query parameter on requests for the SWF
-  useNoCache: true,
-
-  /** @deprecated */
-  // URL to movie
-  moviePath: "ZeroClipboard.swf"
-};
-```
-
-You can override the defaults by making a call like `ZeroClipboard.config({ moviePath: "new/path" });` before you create any clients.
-
-You can also set the options when creating a new client by passing an optional "options" object, e.g.  
-```js
-var client = new ZeroClipboard($("#d_clip_button"), { moviePath: "new/path" });`
-```
-
-However, this per-client options overriding is deprecated as of v1.3.0 and will be removed in v2.0.0.
-
-Whenever possible, we recommend that you change the defaults rather than changing options per client. This works out
-better in most situations as:
- 1. Some options apply outside of `ZeroClipboard` instances, e.g. `debug` currently affects some static methods.
- 2. If you have multiple clients clipped to a shared element, having per-client options can result in confusing effects
-    when that shared element is being activated, e.g. differing values for `zIndex`, `forceHandCursor`, `hoverClass`,
-    `activeClass`, etc.
-
-
-### The `trustedDomains` option: SWF inbound scripting access
-
-This allows other SWF files and HTML pages from the allowed domains to access/call publicly exposed ActionScript code,
-e.g. functions shared via `ExternalInterface.addCallback`. In other words, it controls the SWF inbound scripting access.
-
-If your ZeroClipboard SWF is served from a different origin/domain than your page, you need to tell the SWF that it's
-OK to trust your page. The default value of `[window.location.host]` is almost _**always**_ what you will want unless
-you specifically want the SWF to communicate with pages from other domains (e.g. in iframes or child windows).
-
-For more information about trusted domains, consult the _[official Flash documentation for `flash.system.Security.allowDomain(...)`](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/system/Security.html#allowDomain\(\))_.
-
-
-### The `allowScriptAccess` option: SWF outbound scripting access
-
-This allows the SWF file to access/call JavaScript/HTML functionality of HTML pages on allowed domains, e.g. invoking
-functions via `ExternalInterface.call`. In other words, it controls the SWF outbound scripting access.
-
-For version 1.1.7 and below, the `embed` tag had the `allowScriptAccess` parameter hard-coded to `always`. This allowed
-the "`ZeroClipboard.swf`" file to be hosted on an external domain. However, to enhance security, versions after 1.1.7
-have an option for `allowScriptAccess` with a default of `"sameDomain"`, which only allows "`ZeroClipboard.swf`" to be
-served from the same domain as the hosting page.
-
-If you hosted "`ZeroClipboard.swf`" on a different domain than the hosting page on version 1.1.7 or below, when you upgrade
-to a version above 1.1.7, you should either move "`ZeroClipboard.swf`" to the same domain as the hosting page or set the
-`allowScriptAccess` option to `always`.
-
-As of version 1.3.0, it is no longer necessary to set the `allowScriptAccess` configuration option as its default value
-is now `null` but the appropriate value will be determined immediately before the Flash object is embedded on the page.
-The value is based on a relationship between the current domain (`window.location.host`) and the value of the
-`trustedDomains` configuration option.
-
-**TL;DR default values:**
- - &ge; v1.3.0: `null` _(appropriate value determined on-the-fly during embedding)_
- - &gt; v1.1.7 &lt; v1.3.0: `"sameDomain"`
- - &le; v1.1.7: `"always"`
-
-For more information about `allowScriptAccess`, consult the _[official Flash documentation](http://helpx.adobe.com/flash/kb/control-access-scripts-host-web.html)_.
-
-
-### Cross-Protocol Limitations
-
-ZeroClipboard was intentionally configured to _not_ allow the SWF to be served from a secure domain (HTTPS) but scripted by an insecure domain (HTTP).
-
-If you find yourself in this situation (as in [Issue #170](https://github.com/zeroclipboard/ZeroClipboard/issues/170)), please consider the following options:  
- 1. Serve the SWF over HTTP instead of HTTPS. If the page's protocol can vary (e.g. authorized/unauthorized, staging/production, etc.), you should include add the SWF with a relative protocol (`//s3.amazonaws.com/blah/ZeroClipboard.swf`) instead of an absolute protocol (`https://s3.amazonaws.com/blah/ZeroClipboard.swf`).
- 2. Serve the page over HTTPS instead of HTTP. If the page's protocol can vary, see the note on the previous option (1).
- 3. Update ZeroClipboard's ActionScript codebase to call the [`allowInsecureDomain`](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/system/Security.html#allowInsecureDomain\(\)) method, then recompile the SWF with your custom changes.
+For developers who want to wrap ZeroClipboard into a 3rd party plugin
+(e.g. [jquery.zeroclipboard](https://github.com/zeroclipboard/jquery.zeroclipboard)),
+see the [api/ZeroClipboard.Core.md](api/ZeroClipboard.Core.md) documentation instead.
 
 
 ### Text To Copy
 
-Setting the clipboard text can be done in 4 ways:
+Setting the clipboard text can be done in a variety of ways:
 
-1. Add a `dataRequested` event handler in which you call `client.setText` to set the appropriate text. This event is triggered every time ZeroClipboard tries to inject into the clipboard. Example:
+1. Add a `copy` event handler in which you call `event.clipboardData.setData` to set the appropriate data. This event is triggered every time ZeroClipboard tries to inject into the clipboard. Example:
 
    ```js
-   client.on( 'dataRequested', function (client, args) {
-      client.setText( "Copy me!" );
+   client.on( "copy", function (event) {
+      var clipboard = event.clipboardData;
+      clipboard.setData( "text/plain", "Copy me!" );
+      clipboard.setData( "text/html", "<b>Copy me!</b>" );
+      clipboard.setData( "application/rtf", "{\\rtf1\\ansi\n{\\b Copy me!}}" );
    });
    ```
 
-2. Set the text via `data-clipboard-target` attribute on the button. ZeroClipboard will look for the target element via ID and try and get the text value via `.value` or `.textContent` or `.innerText`.
+2. Set the "text/plain" [and _usually_ "text/html"] clipboard segments via `data-clipboard-target` attribute on the button. ZeroClipboard will look for the target element via ID and try to get the HTML value via `.value`, `.outerHTML`, or `.innerHTML`, and the text value via `.value`, `.textContent`, or `.innerText`. If the HTML and text values for the targeted element match, the value will only be placed into the "text/plain" segment of the clipboard (i.e. the "text/html" segment will cleared).
 
   ```html
-  <button id="my-button" data-clipboard-target="clipboard_text">Copy to Clipboard</button>
+  <button id="my-button_text" data-clipboard-target="clipboard_text">Copy to Clipboard</button>
+  <button id="my-button_textarea" data-clipboard-target="clipboard_textarea">Copy to Clipboard</button>
+  <button id="my-button_pre" data-clipboard-target="clipboard_pre">Copy to Clipboard</button>
 
   <input type="text" id="clipboard_text" value="Clipboard Text"/>
   <textarea id="clipboard_textarea">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
@@ -217,37 +195,46 @@ Setting the clipboard text can be done in 4 ways:
   proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</pre>
   ```
 
-3. Set the text via `data-clipboard-text` attribute on the button. Doing this will let ZeroClipboard take care of the rest.
+3. Set the "text/plain" clipboard segment via `data-clipboard-text` attribute on the button. Doing this will let ZeroClipboard take care of the rest.
 
   ```html
   <button id="my-button" data-clipboard-text="Copy me!">Copy to Clipboard</button>
   ```
 
-4. Set the text via `client.setText` property.  You can call this function at any time; when the page first loads, or later like in a `dataRequested` event handler.  Example:
+4. Set the data via the `ZeroClipboard.setData` (any segment) method.  You can call this function at any time: when the page first loads, or later like in a `copy` event handler.  Example:
+
+  ```js
+  ZeroClipboard.setData( "text/plain", "Copy me!" );
+  ```
+
+  The important caveat of using `ZeroClipboard.setData` is that the data it sets is **transient** and _will only be used for a single copy operation_. As such, we do not particularly
+  recommend using `ZeroClipboard.setData` (and friends) other than inside of a `copy` event handler; however, the API will not prevent you from using it in other ways.
+
+5. Set the data via the `client.setText` ("text/plain" segment), `client.setHtml` ("text/html" segment), `client.setRichText` ("application/rtf" segment), or `client.setData` (any segment) methods.  You can call this function at any time: when the page first loads, or later like in a `copy` event handler.  Example:
 
   ```js
   client.setText( "Copy me!" );
   ```
-  
-  The important caveat of using `client.setText` is that the text it sets is **transient** and _will only be used for a single copy operation_. As such, we do not particularly
-  recommend using `client.setText` other than inside of a `dataRequested` event handler; however, the API will not prevent you from using it in other ways.
+
+  The important caveat of using `client.setData` (and friends) is that the data it sets is **transient** and _will only be used for a single copy operation_. As such, we do not particularly
+  recommend using `client.setData` (and friends) other than inside of a `copy` event handler; however, the API will not prevent you from using it in other ways.
 
 
 ### Clipping
 
 Clipping refers to the process of "linking" the Flash movie to a DOM element on the page. Since the Flash movie is completely transparent, the user sees nothing out of the ordinary.
 
-The Flash movie receives the click event and copies the text to the clipboard.  Also, mouse actions like hovering and mouse-down generate events that you can capture (see *[Event Handlers](#event-handlers)* below).
+The Flash movie receives the click event and copies the text to the clipboard.  Also, mouse actions like hovering and `mousedown` generate events that you can capture (see [_Event Handlers_](#event-handlers) below).
 
 To clip elements, you must pass an element, or array of elements to the `clip` function.
 
 Here is how to clip your client library instance to a DOM element:
 
 ```js
-client.clip( document.getElementById('d_clip_button') );
+client.clip( document.getElementById("d_clip_button") );
 ```
 
-You can pass in a reference to the actual DOM element object itself or an array of DOM objects.  The rest all happens automatically -- the movie is created, all your options set, and it is floated above the element, awaiting clicks from the user.
+You can pass in a reference to the actual DOM element object itself or an array of DOM objects.  The rest all happens automatically: the movie is created, all your options set, and it is floated above the element, awaiting clicks from the user.
 
 
 ### Example Implementation
@@ -265,254 +252,24 @@ var client = new ZeroClipboard( $("button#my-button") );
 
 ## CSS Effects
 
-Since the Flash movie is floating on top of your DOM element, it will receive all the mouse events before the browser has a chance to catch them.  However, for convenience these events are passed through to your clipboard client which you can capture (see *Event Handlers* below).  But in addition to this, the Flash movie can also activate CSS classes on your DOM element to simulate the ":hover" and ":active" pseudo-classes.
+Since the Flash movie is floating on top of your DOM element, it will receive all the mouse events before the browser has a chance to catch them.  However, for convenience, these events are passed through to your clipboard client which you can capture (see _Event Handlers_ below), so long as the `bubbleEvents` configuration property remains set to `true`.
 
-If this feature is enabled, the CSS classes "hover" and "active" are added / removed to your DOM element as the mouse hovers over and clicks the Flash movie.  This essentially allows your button to behave normally, even though the floating Flash movie is receiving all the mouse events.  Please note that the actual CSS pseudo-classes ":hover" and ":active" are not used -- these cannot be programmatically activated with current browser software.  Instead, sub-classes named "zeroclipboard-is-hover" and "zeroclipboard-is-active" are used.  Example CSS:
+In addition to this, ZeroClipboard can also manage CSS classes on the clipped elements that mimic the CSS pseudo-classes ":hover" and ":active" on your DOM element.  This essentially allows your elements to behave normally, even though the floating Flash movie is the first object receiving all the mouse events during the event bubbling phase.  These "pseudo-pseudo-class" names are configurable via the `hoverClass` and `activeClass` configuration properties.
+
+Example CSS, targeting a DOM element with a class of "clip_button":
 
 ```css
-  #d_clip_button {
-    width:150px;
-    text-align:center;
-    border:1px solid black;
-    background-color:#ccc;
-    margin:10px; padding:10px;
+  .clip_button {
+    width: 150px;
+    text-align: center;
+    border: 1px solid black;
+    background-color: #ccc;
+    margin: 10px;
+    padding: 10px;
   }
-  #d_clip_button.zeroclipboard-is-hover { background-color:#eee; }
-  #d_clip_button.zeroclipboard-is-active { background-color:#aaa; }
+  .clip_button.zeroclipboard-is-hover { background-color: #eee; }
+  .clip_button.zeroclipboard-is-active { background-color: #aaa; }
 ```
-
-These classes are for a DOM element with an ID: "d_clip_button".  The "zeroclipboard-is-hover" and "zeroclipboard-is-active" sub-classes would automatically be activated as the user hovers over, and clicks down on the Flash movie, respectively.  They behave exactly like CSS pseudo-classes of the same names.
-
-
-## Event Handlers
-
-The clipboard library allows you set a number of different event handlers.  These are all set by calling the `on()` method, as in this example:
-
-```js
-client.on( 'load', my_load_handler );
-```
-
-The first argument is the name of the event, and the second is a reference to your function.  The function may be passed by name (string) or an actual reference to the function object
-
-Your custom function will be passed at least one argument -- a reference to the clipboard client object.  However, certain events pass additional arguments, which are described in each section below.  The following subsections describe all the available events you can hook.
-
-Event handlers can be removed by calling the `off()` method, which has the same method signature as `on()`:
-
-```js
-client.off( 'load', my_load_handler );
-```
-
-
-#### load
-
-The `load` event is fired when the Flash movie completes loading and is ready for action.  Please note that you don't need to listen for this event to set options -- those are automatically passed to the movie if you call them before it loads.  Example use:
-
-```js
-client.on( 'load', function ( client, args ) {
-  alert( "movie has loaded" );
-});
-```
-
-The handler is passed these options to the `args`
-
-<dl>
-<dt>this</dt>
-<dd>The current element that is being provoked. if null this will be the window</dd>
-<dt>flashVersion</dt>
-<dd>This property contains the users' flash version</dd>
-</dl>
-
-
-#### mouseover
-
-The `mouseover` event is fired when the user's mouse pointer enters the Flash movie.  You can use this to simulate a rollover effect on your DOM element, however see *CSS Effects* for an easier way to do this.  Example use:
-
-```js
-client.on( 'mouseover', function ( client, args ) {
-  alert( "mouse is over movie" );
-});
-```
-
-The handler is passed these options to the `args`
-
-<dl>
-<dt>this</dt>
-<dd>The current element that is being provoked. if null this will be the window</dd>
-<dt>flashVersion</dt>
-<dd>This property contains the users' flash version</dd>
-<dt>altKey</dt>
-<dd>`true` if the Alt key is active</dd>
-<dt>ctrlKey</dt>
-<dd>`true` on Windows and Linux if the Ctrl key is active. `true` on Mac if either the Ctrl key or the Command key is active. Otherwise, `false`.</dd>
-<dt>shiftKey</dt>
-<dd>`true` if the Shift key is active; `false` if it is inactive.</dd>
-</dl>
-
-
-#### mouseout
-
-The `mouseout` event is fired when the user's mouse pointer leaves the Flash movie.  You can use this to simulate a rollover effect on your DOM element, however see *CSS Effects* for an easier way to do this.  Example use:
-
-```js
-client.on( 'mouseout', function ( client, args ) {
-  alert( "mouse has left movie" );
-} );
-```
-
-The handler is passed these options to the `args`
-
-<dl>
-<dt>this</dt>
-<dd>The current element that is being provoked. if null this will be the window</dd>
-<dt>flashVersion</dt>
-<dd>This property contains the users' flash version</dd>
-<dt>altKey</dt>
-<dd>`true` if the Alt key is active</dd>
-<dt>ctrlKey</dt>
-<dd>`true` on Windows and Linux if the Ctrl key is active. `true` on Mac if either the Ctrl key or the Command key is active. Otherwise, `false`.</dd>
-<dt>shiftKey</dt>
-<dd>`true` if the Shift key is active; `false` if it is inactive.</dd>
-</dl>
-
-
-#### mousedown
-
-The `mousedown` event is fired when the user clicks on the Flash movie.  Please note that this does not guarantee that the user will release the mouse button while still over the movie (i.e. resulting in a click).  You can use this to simulate a click effect on your DOM element, however see *CSS Effects* for an easier way to do this.  Example use:
-
-```js
-client.on( 'mousedown', function ( client, args ) {
-  alert( "mouse button is down" );
-} );
-```
-
-The handler is passed these options to the `args`
-
-<dl>
-<dt>this</dt>
-<dd>The current element that is being provoked. if null this will be the window</dd>
-<dt>flashVersion</dt>
-<dd>This property contains the users' flash version</dd>
-<dt>altKey</dt>
-<dd>`true` if the Alt key is active</dd>
-<dt>ctrlKey</dt>
-<dd>`true` on Windows and Linux if the Ctrl key is active. `true` on Mac if either the Ctrl key or the Command key is active. Otherwise, `false`.</dd>
-<dt>shiftKey</dt>
-<dd>`true` if the Shift key is active; `false` if it is inactive.</dd>
-</dl>
-
-
-#### mouseup
-
-The `mouseup` event is fired when the user releases the mouse button (having first pressed the mouse button while hovering over the movie).  Please note that this does not guarantee that the mouse cursor is still over the movie (i.e. resulting in a click).  You can use this to simulate a click effect on your DOM element, however see *CSS Effects* for an easier way to do this.  Example use:
-
-```js
-client.on( 'mouseup', function ( client, args ) {
-  alert( "mouse button is up" );
-} );
-```
-
-The handler is passed these options to the `args`
-
-<dl>
-<dt>this</dt>
-<dd>The current element that is being provoked. if null this will be the window</dd>
-<dt>flashVersion</dt>
-<dd>This property contains the users' flash version</dd>
-<dt>altKey</dt>
-<dd>`true` if the Alt key is active</dd>
-<dt>ctrlKey</dt>
-<dd>`true` on Windows and Linux if the Ctrl key is active. `true` on Mac if either the Ctrl key or the Command key is active. Otherwise, `false`.</dd>
-<dt>shiftKey</dt>
-<dd>`true` if the Shift key is active; `false` if it is inactive.</dd>
-</dl>
-
-
-#### complete
-
-The `complete` event is fired when the text is successfully copied to the clipboard.  Example use:
-
-```js
-client.on( 'complete', function ( client, args ) {
-  alert("Copied text to clipboard: " + args.text );
-} );
-```
-
-The handler is passed these options to the `args`
-
-<dl>
-<dt>this</dt>
-<dd>The current element that is being provoked. if null this will be the window</dd>
-<dt>flashVersion</dt>
-<dd>This property contains the users' flash version</dd>
-<dt>altKey</dt>
-<dd>`true` if the Alt key is active</dd>
-<dt>ctrlKey</dt>
-<dd>`true` on Windows and Linux if the Ctrl key is active. `true` on Mac if either the Ctrl key or the Command key is active. Otherwise, `false`.</dd>
-<dt>shiftKey</dt>
-<dd>`true` if the Shift key is active; `false` if it is inactive.</dd>
-<dt>text</dt>
-<dd>The copied text.</dd>
-</dl>
-
-
-#### noflash
-
-The `noflash` event is fired when the user doesn't have flash installed on their system
-
-```js
-client.on( 'noflash', function ( client, args ) {
-  alert("You don't support flash");
-} );
-```
-
-The handler is passed these options to the `args`
-
-<dl>
-<dt>this</dt>
-<dd>The current element that is being provoked. if null this will be the window</dd>
-<dt>flashVersion</dt>
-<dd>This property contains the users' flash version</dd>
-</dl>
-
-
-#### wrongflash
-
-The `wrongflash` event is fired when the user has the wrong version of flash. ZeroClipboard supports version 10 and up.
-
-```js
-client.on( 'wrongflash', function ( client, args ) {
-  alert("Your flash is too old " + args.flashVersion);
-} );
-```
-
-The handler is passed these options to the `args`
-
-<dl>
-<dt>this</dt>
-<dd>The current element that is being provoked. if null this will be the window</dd>
-<dt>flashVersion</dt>
-<dd>This property contains the users' flash version</dd>
-</dl>
-
-
-#### dataRequested
-
-On mousedown, the Flash object will check and see if the clipboard text has been set. If it hasn't, then it will fire off a `dataRequested` event. If the html object has `data-clipboard-text` or `data-clipboard-target` then ZeroClipboard will take care of getting the data. However if it hasn't been set, then it will be up to you to `client.setText` from that method. Which will complete the loop.
-
-```js
-client.on( 'dataRequested', function ( client, args ) {
-  client.setText( 'Copied to clipboard.' );
-} );
-```
-
-The handler is passed these options to the `args`
-
-<dl>
-<dt>this</dt>
-<dd>The current element that is being provoked. if null this will be the window</dd>
-<dt>flashVersion</dt>
-<dd>This property contains the users' flash version</dd>
-</dl>
 
 
 ## Examples
@@ -525,23 +282,22 @@ The following are complete, working examples of using the clipboard client libra
 Here is a quick example using as few calls as possible:
 
 ```html
-  <html>
+<html>
   <body>
-
-    <div id="d_clip_button" data-clipboard-text="Copy Me!" title="Click to copy." style="border:1px solid black; padding:20px;">Copy To Clipboard</div>
+    <div id="d_clip_button" class="clip_button" data-clipboard-text="Copy Me!" title="Click to copy." style="border:1px solid black; padding:20px;">Copy To Clipboard</div>
 
     <script type="text/javascript" src="ZeroClipboard.js"></script>
     <script type="text/javascript">
       var client = new ZeroClipboard( document.getElementById('d_clip_button') );
     </script>
   </body>
-  </html>
+</html>
 ```
 
 When clicked, the text "Copy me!" will be copied to the clipboard.
 
 
-### Complete Example
+### A More Complete Example
 
 Here is a more complete example which exercises many of the configuration options and event handlers:
 
@@ -570,19 +326,20 @@ Here is a more complete example which exercises many of the configuration option
     <script type="text/javascript">
       var client = new ZeroClipboard( $('.clip_button') );
 
-      client.on( 'load', function(client) {
-        // alert( "movie is loaded" );
+      client.on( 'ready', function(event) {
+        // console.log( 'movie is loaded' );
 
-        client.on( 'datarequested', function(client) {
-          client.setText(this.innerHTML);
+        client.on( 'copy', function(event) {
+          event.clipboardData.setData('text/plain', event.target.innerHTML);
         } );
 
-        client.on( 'complete', function(client, args) {
-          alert("Copied text to clipboard: " + args.text );
+        client.on( 'aftercopy', function(event) {
+          console.log('Copied text to clipboard: ' + event.data['text/plain']);
         } );
       } );
 
-      client.on( 'wrongflash noflash', function() {
+      client.on( 'error', function(event) {
+        // console.log( 'ZeroClipboard error of type "' + event.name + '": ' + event.message );
         ZeroClipboard.destroy();
       } );
     </script>
@@ -591,15 +348,38 @@ Here is a more complete example which exercises many of the configuration option
 ```
 
 
+### "Starter Snippets" for Playground Sites
+
+**IMPORTANT:** ZeroClipboard will _NOT_ work on the "Edit" pages for any of the following online code playground sites due to [security limitations imposed by their use of `iframe` `sandbox`ing](#sandboxed-iframe-limitations). However, ZeroClipboard _will_ work on the "View" pages _if and only if_ you use the very specifically formatted URL patterns provided below.
+
+ - JSFiddle
+     - Edit: http://jsfiddle.net/JamesMGreene/k9psq1da/
+     - View: http://fiddle.jshell.net/JamesMGreene/k9psq1da/show/
+ - JSBin
+     - Edit: http://jsbin.com/lozuda/edit?html,js,css
+     - View: http://jsbin.com/lozuda/
+ - CodePen
+     - Edit: http://codepen.io/JamesMGreene/pen/zxorvW
+     - View: http://s.codepen.io/JamesMGreene/full/zxorvW/
+
+
+## Namespacing ZeroClipboard
+
+ZeroClipboard creates DOM elements with pre-configured attributes, e.g. a `div` element with an ID of `"global-zeroclipboard-html-bridge"` to encapsulate the Flash object.
+
+If you have a need to change the default values, they can be configured by passing in values for `containerId`, `containerClass`, and/or `swfObjectId` using the `ZeroClipboard.config` method. Configuration of these values is completely optional. These values cannot be reconfigured while the ZeroClipboard SWF is actively embedded, and so are completely ignored during that time.
+
+Values for `containerId` and `swfObjectId` are validated against the [HTML4 spec for `ID` and `Name` tokens][valid_ids].
+
+
 ## AMD
 
 If using [AMD](https://github.com/amdjs/amdjs-api/wiki/AMD) with a library such as [RequireJS](http://requirejs.org/), etc., you shouldn't need to do any special configuration for ZeroClipboard to work correctly as an AMD module.
 
-However, in order to correctly dispatch events while using AMD, ZeroClipboard expects a [global `require` function](https://github.com/amdjs/amdjs-api/wiki/require) to exist. If you are using an AMD loader that does _not_ expose a global `require` function (e.g. curl.js), then you will need to add that function yourself. For example, with curl.js:
 
-```js
-window.require = curl;
-```
+## CommonJS
+
+If using [CommonJS](http://wiki.commonjs.org/wiki/Modules/1.1) with a library such as [Browserify](http://browserify.org/), [Webmake](https://github.com/medikoo/modules-webmake), etc., you shouldn't need to do any special configuration for ZeroClipboard to work correctly as an CommonJS module.
 
 
 ## Known Conflicts With Other Libraries
@@ -611,23 +391,41 @@ window.require = curl;
    changes in future versions of Bootstrap.
  - **Workaround:** _Targeted against [Bootstrap v3.x](https://github.com/twbs/bootstrap/blob/96a9e1bae06cb21f8cf72ec528b8e31b6ab27272/js/modal.js#L115-123)._
 
+#### Workaround A
+
 ```js
-(function($) {
-  var proto = $.fn.modal.Constructor.prototype;
-  proto.enforceFocus = function () {
-    $(document)
-      .off('focusin.bs.modal') // guard against infinite focus loop
-      .on('focusin.bs.modal', $.proxy(function (e) {
-        if (this.$element[0] !== e.target &&
-           !this.$element.has(e.target).length &&
-           /* Adding this final condition check is the only real change */
-           !$(e.target).closest('.global-zeroclipboard-container').length) {
-          this.$element.focus()
-        }
-      }, this))
-  };
-})(window.jQuery);
+if (/MSIE|Trident/.test(window.navigator.userAgent)) {
+  (function($) {
+    var zcContainerId = ZeroClipboard.config('containerId');
+    $('#' + zcContainerId).on('focusin', false);
+  })(window.jQuery);
+}
 ```
+
+#### Workaround B
+
+```js
+if (/MSIE|Trident/.test(window.navigator.userAgent)) {
+  (function($) {
+    var zcClass = '.' + ZeroClipboard.config('containerClass');
+    var proto = $.fn.modal.Constructor.prototype;
+    proto.enforceFocus = function() {
+      $(document)
+        .off('focusin.bs.modal')  /* Guard against infinite focus loop */
+        .on('focusin.bs.modal', $.proxy(function(e) {
+          if (this.$element[0] !== e.target &&
+             !this.$element.has(e.target).length &&
+             /* Adding this final condition check is the only real change */
+             !$(e.target).closest(zcClass).length
+          ) {
+            this.$element.focus();
+          }
+        }, this));
+    };
+  })(window.jQuery);
+}
+```
+
 
 ### [IE freezes when clicking a ZeroClipboard clipped element within a jQuery UI [Modal] Dialog](https://github.com/zeroclipboard/zeroclipboard/issues/159).
  - **Cause:** jQuery UI's Dialog (with `{ modal: true }` set) has a `_keepFocus` function that tries to keep the focus on the modal.
@@ -636,19 +434,41 @@ window.require = curl;
  - **Workaround:** _Targeted against [jQuery UI v1.10.x](https://github.com/jquery/jquery-ui/blob/457b275880b63b05b16b7c9ee6c22f29f682ebc8/ui/jquery.ui.dialog.js#L695-703)._
 
 ```js
-(function($) {
-  $.widget( "ui.dialog", $.ui.dialog, {
-    _allowInteraction: function( event ) {
-      return this._super() || $( event.target ).closest( ".global-zeroclipboard-container" ).length;
-    }
-  } );
-})(window.jQuery);
+if (/MSIE|Trident/.test(window.navigator.userAgent)) {
+  (function($) {
+    var zcClass = '.' + ZeroClipboard.config('containerClass');
+    $.widget( 'ui.dialog', $.ui.dialog, {
+      _allowInteraction: function( event ) {
+        return this._super(event) || $( event.target ).closest( zcClass ).length;
+      }
+    } );
+  })(window.jQuery);
+}
 ```
 
 
-## Browser Support
+## Support
 
-Works in IE7+ and all of the evergreen browsers.
+This library is fully compatible with Flash Player 11.0.0 and above, which requires
+that the clipboard copy operation be initiated by a user click event inside the
+Flash movie. This is achieved by automatically floating the invisible movie on top
+of a [DOM](http://en.wikipedia.org/wiki/Document_Object_Model) element of your
+choice. Standard mouse events are even propagated out to your DOM element, so you
+can still have rollover and mousedown effects with just a _little_ extra effort.
+
+ZeroClipboard `v2.x` is expected to work in IE9+ and all of the evergreen browsers.
+Although support for IE7 & IE8 was officially dropped in `v2.0.0`, it was actually
+still _technically_ supported through `v2.0.2`.
+
+
+
+## Browser-Specific Known Issues
+
+### Opera
+ - [Issue #459](https://github.com/zeroclipboard/zeroclipboard/issues/459)
+     - **Problem:** Both the implicit observation of clipped elements' `cursor` CSS property and the `forceHandCursor: true` [Configuration Option](api/ZeroClipboard.md#configuration-options) cannot be honored in Opera's NPAPI Flash Player plugin.
+     - **Workaround:** End users must install both Opera 24+ **AND** the separate PPAPI Flash Player plugin that is currently only available in [Adobe Flash Player 16 Beta](http://labs.adobe.com/downloads/flashplayer.html) (look for the OS-specific download entitled "Download Flash Player for Opera and Chromium based applications – PPAPI"). Beginning with Opera 27 (currently in the alpha/dev channel cycle), Opera will automatically warn users that only have the NPAPI Flash Player plugin installed and guide them into installing the PPAPI Flash Player plugin from Adobe.
+
 
 
 ## OS Considerations
@@ -657,79 +477,138 @@ Because ZeroClipboard will be interacting with your users' system clipboards, th
 specific to the users' operating systems that you should be aware of. With this information, you can make informed
 decisions of how _your_ site should handle each of these situations.
 
- - **Windows:**
-     - If you want to ensure that your Windows users will be able to paste their copied text into Windows
-       Notepad and have it honor line breaks, you'll need to ensure that the text uses the sequence `\r\n` instead of
-       just `\n` for line breaks.  If the text to copy is based on user input (e.g. a `textarea`), then you can achieve
-       this transformation by utilizing the `dataRequested` event handler, e.g.  
+### All OSs
+ - By default, ZeroClipboard will ensure OS-compliant line endings, i.e. `"\r\n"` on Windows, `"\n"` on all non-Windows operating systems. If this behavior is not desirable, you can disable it by setting the `fixLineEndings` [configuration option](api/ZeroClipboard.md#configuration-options) to `false`, i.e.:
+
+    ```js
+    ZeroClipboard.config({
+        fixLineEndings: false
+    });
+    ```
+
+### Linux
+ - The Linux Clipboard system (a.k.a. "Selection Atoms" within the [X Consortium's Standard Inter-Client Communication Conventions Manual](http://www.x.org/docs/ICCCM/icccm.pdf)) is a complex but capable setup. However, for normal end users, it stinks. Flash Player's Clipboard API can either:
+     1. Insert plain text into the "System Clipboard" and have it available everywhere; or
+     2. Insert plain, HTML, and RTF text into the "Desktop Clipboard" but it will only be available in applications whose UI are managed by the Desktop Manager System (e.g. GNOME, etc.). This, for example, means that a user on a typical Linux configuration would not be able to paste something copied with ZeroClipboard into a terminal shell but they may still be able to paste it into OpenOffice, the browser, etc.
+
+   As such, the default behavior for ZeroClipboard while running on Linux is to only inject plain text into the "System Clipboard" to cover the most bases.  If you want to ignore that caution and use the "Desktop Clipboard" anyway, just set the `forceEnhancedClipboard` [configuration option](api/ZeroClipboard.md#configuration-options) to `true`, i.e.:
 
       ```js
-      client.on('dataRequested', function(client, args) {
-          var text = document.getElementById('yourTextArea').value;
-          var windowsText = text.replace(/\n/g, '\r\n');
-          client.setText(windowsText);
+      ZeroClipboard.config({
+        forceEnhancedClipboard: true
       });
       ```
 
+   Also, a final related behavioral caveat: if the pending clipboard data **ONLY** contains data of the
+   format `"text/plain"`, ZeroClipboard will intelligently choose to use the "System Clipboard" regardless
+   of the `forceEnhancedClipboard` configuration property value.
 
 
-# Deprecations
 
-By default, ZeroClipboard will issue deprecation warnings to the developer `console`. To disable this, set the
-following option:  
+## Security Limitations
+
+### `sandbox`ed `iframe` Limitations
+
+The `sandbox` attribute of the `iframe` element (new in HTML5, supported in IE10+ and all other evergreen browsers) provides web developers with a way tighten the restrictions on framed content beyond what Content Security Policy (CSP) provides for un`sandbox`ed cross-origin `iframe`s.  With the `sandbox` attribute, you can instruct the browser to load a specific frame's content in a low-privilege environment, starting with the least privilege possible and then whitelisting the necessary subset of capabilities.
+
+It is also very important to note, however, that the `sandbox` attribute takes away some privileges from the framed content that **CANNOT** be whitelisted "back in". For example, any framed page running in a sandbox absolutely _cannot_ run native plugins (e.g. Flash, Silverlight, Java, etc.). This decision was made because native plugins run unmanaged code that the browser cannot offer any further security verifications on, and are frequently sourced from third parties.
+
+As such, ZeroClipboard is completely unusable inside of a `sandbox`ed `iframe`. Best efforts have been taken to detect sandboxing and notify consumers via an `error` event (`error[name = "flash-sandboxed"]`) but, unfortunately, not all configurations of sandboxing can be reliably detected from within the framed content.
+
+This sandboxing is also why ZeroClipboard cannot be used as normal on many online code playground sites like JSFiddle, JSBin, CodePen, etc. However, we have put together a few ["starter snippets" for such sites](#starter-snippets-for-playground-sites) to get you up and running quickly.
+
+For a deeper analysis and a few _"naughty"_ workarounds (which only work in limited situations), check
+out the [sandblaster.js (JamesMGreene/sandblaster)](https://github.com/JamesMGreene/sandblaster) project.
+
+#### See Also
+
+ - [HTML5 Rocks :metal: article on `sandbox`ed `iframe`s](http://www.html5rocks.com/en/tutorials/security/sandboxed-iframes/)
+ - [HTML spec: `iframe` `sandbox` attribute](https://html.spec.whatwg.org/multipage/embedded-content.html#attr-iframe-sandbox)
+ - [HTML spec: Browser sandboxing](http://www.w3.org/TR/html/browsers.html#sandboxing)
+ - [HTML5 Rocks :metal: article on Content Security Policy (CSP)](http://www.html5rocks.com/en/tutorials/security/content-security-policy/)
+
+
+### Cross-Protocol Limitations
+
+ZeroClipboard was intentionally configured to _not_ allow the SWF to be served from a secure domain (HTTPS) but scripted by an insecure domain (HTTP).
+
+If you find yourself in this situation (as in [Issue #170](https://github.com/zeroclipboard/zeroclipboard/issues/170)), please consider the following options:
+ 1. Serve the SWF over HTTP instead of HTTPS. If the page's protocol can vary (e.g. authorized/unauthorized, staging/production, etc.), you should include add the SWF with a relative protocol (`//s3.amazonaws.com/blah/ZeroClipboard.swf`) instead of an absolute protocol (`https://s3.amazonaws.com/blah/ZeroClipboard.swf`).
+ 2. Serve the page over HTTPS instead of HTTP. If the page's protocol can vary, see the note on the previous option (1).
+ 3. Fork ZeroClipboard and update "src/flash/ZeroClipboard.as" to call the [`allowInsecureDomain`](http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/system/Security.html#allowInsecureDomain\(\)) method as needed, then recompile the SWF with your custom changes.
+
+
+### `file://` Protocol Limitations
+
+If you want to either use ZeroClipboard on a page hosted via the `file://` protocol or serve ZeroClipboard's assets via the `file://` protocol, you are almost guaranteed to run into some roadblocks due to Flash Player security restrictions. Whether you will be able to work around these roadblocks depends heavily on the specifics of the browser and Flash Player plugin being used.
+
+The various potential and/or partial workarounds are detailed below. We recommend trying them in the
+order they are listed, with the exception of any that are not applicable to your browser/Flash setup.
+
+#### Stop Hosting It Over The `file://` Protocol
+
+Do you really need to be hosting this via the `file://` protocol?  If not, please don't: it may turn into a neverending (or outright _losing_) security configuration battle for you.
+
+We recommend that you instead just get a simple HTTP server installed and use it.  Many HTTP server applications exist today that don't even require configuration or proper "installation", they are just executable files that can dynamically host the current working directory (or accept command line configuration options). Simple, easy, done.
+
+But, if you really do _need_ to be hosting this via the `file://` protocol, please read on... and we wish you much-needed luck.
+
+
+#### Tell ZeroClipboard To Trust Anyone & Everyone
+
+Rarely, for some browser/Flash setups, you can bypass this security restriction as easily as specifically
+configuring ZeroClipboard to trust ALL domains for SWF interaction via a wildcard. This
+configuration must be set _before_ creating ZeroClipboard client instances as a typical consumer,
+or before calling `ZeroClipboard.create()` in a 3rd party wrapper:
+
 ```js
-ZeroClipboard.config({ debug: false });`
+ZeroClipboard.config({ trustedDomains: ["*"] });
 ```
 
-The current list of deprecations includes:  
- - `ZeroClipboard.prototype.setHandCursor` &rarr; as of [v1.2.0], removing in [v2.0.0]
-     - Use the `forceHandCursor` config option instead!
- - `ZeroClipboard.prototype.reposition` &rarr; as of [v1.2.0], removing in [v2.0.0]
-     - Repositioning is now handled more intelligently internally, so this method is simply no longer needed by users.
- - `ZeroClipboard.prototype.receiveEvent` &rarr; as of [v1.2.0], removing in [v2.0.0]
-     - This should only be used internally, so this method will be removed from the public API.
- - `ZeroClipboard.detectFlashSupport` &rarr; as of [v1.2.0], removing in [v2.0.0]
-     - This should only be used internally, so this method will be removed from the public API.
- - The `hoverClass` config option &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - As of [v2.0.0] (but no sooner), you will be able to use normal `:hover` CSS pseudo-class selectors instead!
- - The `activeClass` config option &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - As of [v2.0.0] (but no sooner), you will be able to use normal `:active` CSS pseudo-class selectors instead!
- - The `trustedOrigins` config option &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use the `trustedDomains` config option instead!
- - The `allowScriptAccess` config option &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - The correct value can be intelligently calculated internally, so this option is simply no longer needed by users.
- - `new ZeroClipboard(elements, options)` &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Most options actually have a global effect rather than a per-client effect, so we are removing the ability to
-       customize options per-client to help avoid confusion. The constructor `new ZeroClipboard(elements)` will remain.
- - `ZeroClipboard.prototype.addEventListener` &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use `ZeroClipboard.prototype.on` instead!
- - `ZeroClipboard.prototype.removeEventListener` &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use `ZeroClipboard.prototype.off` instead!
- - `ZeroClipboard.prototype.setCurrent` &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use `ZeroClipboard.activate` instead!
- - `ZeroClipboard.prototype.resetBridge` &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use `ZeroClipboard.deactivate` instead!
- - `ZeroClipboard.prototype.setTitle` &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use the `title` config option instead!
- - `ZeroClipboard.setDefaults` &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use `ZeroClipboard.config` instead!
- - `ZeroClipboard#handlers` &rarr; as of [v1.3.0], removed in [v1.3.0]
-     - Use the `ZeroClipboard.prototype.handlers` method instead!
- - `ZeroClipboard.prototype.ready` &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - For v1.x, use the `ZeroClipboard.prototype.on("load", ...);` instead!
-     - For v2.x, use the `ZeroClipboard.prototype.on("ready", ...);` instead!
- - `ZeroClipboard.prototype.glue` &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use `ZeroClipboard.prototype.clip` instead!
- - `ZeroClipboard.prototype.unglue` &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use `ZeroClipboard.prototype.unclip` instead!
- - The `useNoCache` config option &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use the `cacheBust` config option instead!
- - The `moviePath` config option &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use the `swfPath` config option instead!
-     - For v1.3.x usage, do: `ZeroClipboard.config({ moviePath: ZeroClipboard.config("swfPath") });`
- - `ZeroClipboard.dispatch` &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use `ZeroClipboard.emit` instead!
- - All v1.x event names &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use the [v2.x event names](https://gist.github.com/JamesMGreene/7886534#events) instead!
- - The v1.x event model &rarr; as of [v1.3.0], removing in [v2.0.0]
-     - Use the [v2.x event model (based on the DOM event model)](https://gist.github.com/JamesMGreene/7886534#event-handler-format) instead!
+This wildcard configuration should _**NOT**_ be used in environments hosted over HTTP/HTTPS.
+
+
+#### Tell Flash Player Local Settings Manager To Trust Your SWF URL
+
+If you are using any browser with the traditional NPAPI Flash Player plugin enabled **AND** _preferred_
+(i.e. PPAPI Flash Player plugins are not supported, are not installed, or are disabled for the browser
+instance in question) or using the PPAPI Flash Player plugin `v16.0.0` (or higher), you can edit your
+system-level Flash Player security settings to whitelist your SWF URL using the [Flash Player
+Local Settings Manager](http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager.html):
+ 1. Open the Flash Player Local Settings Manager via your system's [OS-specific access procedure](http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager.html#124401).
+ 2. Go to the ["Advanced" tab](http://help.adobe.com/en_US/FlashPlayer/LSM/WS6aa5ec234ff3f285139dc56112e3786b68c-7ff0.html).
+ 3. Locate the ["Developer Tools" subsection](http://help.adobe.com/en_US/FlashPlayer/LSM/WS6aa5ec234ff3f285139dc56112e3786b68c-7ff0.html#WS6aa5ec234ff3f285139dc56112e3786b68c-7feb) (may require you to scroll down).
+ 4. Click the ["Trusted Location Settings..." button](http://help.adobe.com/en_US/FlashPlayer/LSM/WS6aa5ec234ff3f285139dc56112e3786b68c-7ff0.html#WS6aa5ec234ff3f285139dc56112e3786b68c-7fea).
+ 5. Click "Add location" (may be represented as a `+` button).
+ 6. Add the absolute path of your local "ZeroClipboard.swf" file to the trusted files whitelist.
+
+This should work for all NPAPI Flash Player plugins. However, this _may_ **not** work for all PPAPI Flash Player plugins.
+
+
+#### Tell Flash Player Online Settings Manager To Trust Your SWF URL
+
+If you are using any browser with the traditional NPAPI Flash Player plugin enabled **AND** _preferred_
+(i.e. PPAPI Flash Player plugins are not supported, are not installed, or are disabled for the browser
+instance in question), you can edit your device-level NPAPI Flash Player security settings to whitelist
+your SWF URL using the [Flash Player Online Settings Manager](http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04a.html):
+ 1. Using the same browser, go to the [Adobe Flash Player Online Settings Manager page](http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04a.html).
+ 2. In the small embedded Flash app (which looks more like a screen capture rather than an interactive UI), click "Add location".  This may be inside of an "Edit locations..." dropdown menu.
+ 3. Add the absolute path of your local "ZeroClipboard.swf" file to the trusted files whitelist.
+
+Some versions of Flash also include an "allow all" option in the Global Settings Manager.
+
+This should work for all NPAPI Flash Player plugins. However, this **WILL NOT** work for _any_ PPAPI Flash Player plugins.
+
+
+#### Tell PPAPI Flash Player Plugins To Take A Hike
+
+If you are using a PPAPI Flash Player plugin and all of the aforementioned workarounds **combined** still didn't allow you to bypass this security restriction, you have officially run out of proper workarounds as you have almost certainly run into the [even more restrictive security model in Chromium's "Pepper" (PPAPI) Flash layer](https://code.google.com/p/chromium/issues/detail?id=137734). This elevated security will affect PPAPI Flash Player plugin usage in Chromium, Chrome Canary, Chrome, and possibly all Blink-based versions of Opera.
+
+At this point, your only remaining option is to disable your PPAPI Flash Player plugin and fallback to an NPAPI Flash Player plugin instead.
+
+If you are unwilling to disable your PPAPI Flash Player plugin, your goal has now officially been defeated by Flash Player's security restrictions.  You should now reconsider our earlier recommendation to [stop hosting it over the `file://` protocol](#stop-hosting-it-over-the-file-protocol)... we _tried_ to warn you!
+
+
+
+
+[valid_ids]: http://www.w3.org/TR/html4/types.html#type-id "HTML4 specification for `ID` and `Name` tokens"
